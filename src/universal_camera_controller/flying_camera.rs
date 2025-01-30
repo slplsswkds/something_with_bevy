@@ -4,7 +4,6 @@ use bevy::prelude::*;
 
 #[derive(Component)]
 pub struct FlyingCamera {
-    sensibility: f32,
     speed: f32,
     pitch: f32,
     yaw: f32,
@@ -13,7 +12,6 @@ pub struct FlyingCamera {
 impl Default for FlyingCamera {
     fn default() -> Self {
         Self {
-            sensibility: 0.002,
             speed: 100.0,
             pitch: 0.0,
             yaw: 0.0,
@@ -76,8 +74,8 @@ impl FlyingCamera {
         }
 
         for event in bridge.evr_mouse_movement.read() {
-            self.yaw -= self.sensibility * event.delta.x;
-            self.pitch -= self.sensibility * event.delta.y;
+            self.yaw -= bridge.res_settings.sensibility_horizontal * event.delta.x;
+            self.pitch -= bridge.res_settings.sensibility_vertical * event.delta.y;
 
             self.pitch = self
                 .pitch

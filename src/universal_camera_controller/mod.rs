@@ -14,11 +14,27 @@ pub mod prelude {
     pub use super::UniversalCameraControllerPlugin;
 }
 
+#[derive(Resource)]
+struct UniversalCameraControllerSettings {
+    sensibility_vertical: f32,
+    sensibility_horizontal: f32,
+}
+
+impl Default for UniversalCameraControllerSettings {
+    fn default() -> Self {
+        Self {
+            sensibility_vertical: 0.003,
+            sensibility_horizontal: 0.004,
+        }
+    }
+}
+
 pub struct UniversalCameraControllerPlugin;
 
 impl Plugin for UniversalCameraControllerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, universal_camera_controller_system);
+        app.init_resource::<UniversalCameraControllerSettings>()
+            .add_systems(Update, universal_camera_controller_system);
     }
 }
 
@@ -34,6 +50,7 @@ fn universal_camera_controller_system(
 #[derive(SystemParam)]
 struct UniversalCameraControllerBridge<'w, 's> {
     res_time: Res<'w, Time>,
+    res_settings: Res<'w, UniversalCameraControllerSettings>,
     cam_transform: Query<'w, 's, &'static mut Transform, With<Camera3d>>,
     evr_mouse_movement: EventReader<'w, 's, MouseMotion>,
     keys: Res<'w, ButtonInput<KeyCode>>,

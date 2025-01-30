@@ -1,6 +1,6 @@
 [package]
 name = "something_with_bevy"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 
 # ------------------------- Enable a small amount of optimization in the dev profile.
@@ -30,10 +30,6 @@ rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 # for Windows
 [target.x86_64-pc-windows-msvc]
 linker = "rust-lld.exe"
-
-[dependencies]
-tracing = "0.1.41"
-tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 
 [dependencies.bevy]
 version = "0.15.1"

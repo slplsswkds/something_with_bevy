@@ -1,13 +1,9 @@
 use super::{UniversalCameraControllerBridge, UniversalCameraControllerTrait};
-use bevy::math::Vec3;
-use bevy::prelude::{Component, KeyCode};
-use std::f32::consts::PI;
+use bevy::prelude::{Component, Vec3};
 
 #[allow(dead_code)]
 #[derive(Component)]
 pub struct SphericalCamera {
-    sensibility_vertical: f32,
-    sensibility_horizontal: f32,
     radius: f32,
     theta: f32,
     phi: f32,
@@ -16,8 +12,6 @@ pub struct SphericalCamera {
 impl Default for SphericalCamera {
     fn default() -> Self {
         Self {
-            sensibility_vertical: 0.003,
-            sensibility_horizontal: 0.004,
             radius: 10.0,
             theta: 0.0,
             phi: 0.0,
@@ -28,8 +22,8 @@ impl Default for SphericalCamera {
 impl UniversalCameraControllerTrait for SphericalCamera {
     fn update(&mut self, bridge: &mut UniversalCameraControllerBridge) {
         for event in bridge.evr_mouse_movement.read() {
-            self.phi -= self.sensibility_horizontal * event.delta.x;
-            self.theta += self.sensibility_vertical * event.delta.y;
+            self.phi -= bridge.res_settings.sensibility_horizontal * event.delta.x;
+            self.theta += bridge.res_settings.sensibility_vertical * event.delta.y;
 
             // self.phi = self.phi.clamp(-181_f32.to_radians(), 181_f32.to_radians());
             self.theta = self.theta.clamp(10_f32.to_radians(), 89.9_f32.to_radians());
