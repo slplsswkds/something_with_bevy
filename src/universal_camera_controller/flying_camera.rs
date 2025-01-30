@@ -5,6 +5,7 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct FlyingCamera {
     speed: f32,
+    desired_position: Vec3,
     pitch: f32,
     yaw: f32,
 }
@@ -12,7 +13,8 @@ pub struct FlyingCamera {
 impl Default for FlyingCamera {
     fn default() -> Self {
         Self {
-            speed: 100.0,
+            speed: 45.0,
+            desired_position: Vec3::ZERO,
             pitch: 0.0,
             yaw: 0.0,
         }
@@ -39,7 +41,11 @@ impl FlyingCamera {
 
             let delta_move = self.speed * bridge.res_time.delta_secs();
 
-            let mut desired_position = cam_transform.translation;
+            let mut desired_position = if self.desired_position == Vec3::ZERO {
+                cam_transform.translation
+            } else {
+                self.desired_position
+            };
 
             if bridge.keys.pressed(KeyCode::KeyW) {
                 desired_position -= forward * delta_move;
@@ -60,7 +66,12 @@ impl FlyingCamera {
                 desired_position.y -= delta_move;
             }
 
-            cam_transform.translation = cam_transform.translation.lerp(desired_position, 0.1);
+            self.desired_position = desired_position;
+
+            // cam_transform.translation = cam_transform.translation.lerp(desired_position, 0.5);
+
+            let t = 1.0 - (-20.0 * bridge.res_time.delta_secs()).exp();
+            cam_transform.translation = cam_transform.translation.lerp(desired_position, t);
         }
     }
 
@@ -73,20 +84,27 @@ impl FlyingCamera {
             self.pitch = pitch + 1e-3;
         }
 
+        let mut total_delta_x = 0.0;
+        let mut total_delta_y = 0.0;
+
         for event in bridge.evr_mouse_movement.read() {
-            self.yaw -= bridge.res_settings.sensibility_horizontal * event.delta.x;
-            self.pitch -= bridge.res_settings.sensibility_vertical * event.delta.y;
-
-            self.pitch = self
-                .pitch
-                .clamp(-90.0_f32.to_radians(), 90.0_f32.to_radians());
-
-            let yaw_rotation = Quat::from_rotation_y(self.yaw);
-            let pitch_rotation = Quat::from_rotation_x(self.pitch);
-
-            let desired_rotation = yaw_rotation * pitch_rotation;
-            let interpolated_rotation = cam_transform.rotation.slerp(desired_rotation, 0.3);
-            cam_transform.rotation = interpolated_rotation;
+            total_delta_x += event.delta.x;
+            total_delta_y += event.delta.y;
         }
+
+        self.yaw -= bridge.res_settings.sensibility_horizontal * total_delta_x;
+        self.pitch -= bridge.res_settings.sensibility_vertical * total_delta_y;
+
+        self.pitch = self
+            .pitch
+            .clamp(-90.0_f32.to_radians(), 90.0_f32.to_radians());
+
+        let yaw_rotation = Quat::from_rotation_y(self.yaw);
+        let pitch_rotation = Quat::from_rotation_x(self.pitch);
+
+        let t = 1.0 - (-15.0 * bridge.res_time.delta_secs()).exp(); // Гладка інтерполяція
+        cam_transform.rotation = cam_transform
+            .rotation
+            .slerp(yaw_rotation * pitch_rotation, t);
     }
 }

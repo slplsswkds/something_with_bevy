@@ -86,6 +86,14 @@ fn setup_tmp_world_env(
 
     let mesh_handle = meshes.add(mesh);
 
+    // Cube
+    commands.spawn((
+        Mesh3d(meshes.add(Cuboid::default())),
+        MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
+        Transform::from_xyz(0.0, 0.5, 0.0),
+    ));
+
+    // Ground
     commands.spawn((
         Mesh3d(mesh_handle.clone()),
         MeshMaterial3d(material.clone()),
@@ -103,6 +111,7 @@ fn setup_tmp_world_env(
         Transform::from_xyz(3.0, 6.0, 1.0),
     ));
 
+    // Camera
     commands.spawn((
         Camera3d::default(),
         Camera {

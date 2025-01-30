@@ -25,8 +25,8 @@ pub struct UniversalCameraControllerSettings {
 impl Default for UniversalCameraControllerSettings {
     fn default() -> Self {
         Self {
-            sensibility_vertical: 0.003,
-            sensibility_horizontal: 0.004,
+            sensibility_vertical: 0.0015,
+            sensibility_horizontal: 0.002,
         }
     }
 }
