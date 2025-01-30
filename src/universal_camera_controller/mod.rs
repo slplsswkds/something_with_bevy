@@ -36,7 +36,13 @@ pub struct UniversalCameraControllerPlugin;
 impl Plugin for UniversalCameraControllerPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UniversalCameraControllerSettings>()
-            .add_systems(Update, universal_camera_controller_system);
+            .add_systems(
+                Update,
+                (
+                    universal_camera_controller_mode_switching_system,
+                    universal_camera_controller_system,
+                ),
+            );
     }
 }
 
@@ -44,8 +50,23 @@ fn universal_camera_controller_system(
     mut universal_camera: Query<&mut UniversalCameraController>,
     mut bridge: UniversalCameraControllerBridge,
 ) {
-    universal_camera.iter_mut().for_each(|mut camera| {
-        camera.mode.update(&mut bridge);
+    universal_camera.iter_mut().for_each(|mut cam_controller| {
+        cam_controller.mode.update(&mut bridge);
+    })
+}
+
+// maybe i should use events?
+fn universal_camera_controller_mode_switching_system(
+    mut universal_camera: Query<&mut UniversalCameraController>,
+    keys: Res<ButtonInput<KeyCode>>,
+) {
+    universal_camera.iter_mut().for_each(|mut cam_controller| {
+        if keys.just_pressed(KeyCode::F1) {
+            *cam_controller = UniversalCameraController::flying_camera();
+        }
+        if keys.just_pressed(KeyCode::F3) {
+            *cam_controller = UniversalCameraController::spherical_camera();
+        }
     })
 }
 
