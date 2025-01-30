@@ -1,28 +1,37 @@
+mod universal_camera_controller;
 use bevy::core_pipeline::bloom::Bloom;
+use bevy::ecs::system::SystemParam;
 use bevy::image::ImageLoaderSettings;
 use bevy::prelude::*;
 use bevy::render::{
     settings::{Backends, RenderCreation, WgpuSettings},
     RenderPlugin,
 };
+use bevy::window::*;
 use std::path::PathBuf;
+use universal_camera_controller::prelude::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins.set(RenderPlugin {
-            render_creation: RenderCreation::Automatic(WgpuSettings {
-                // #[cfg(target_os = "windows")]
-                // backends: Some(Backends::DX12),
-                // #[cfg(target_os = "linux")]
-                backends: Some(Backends::VULKAN),
-                ..default()
-            }),
-            ..default()
-        }))
-        // .insert_resource(bevy::pbr::DirectionalLightShadowMap { size: 512 })
-        // .insert_resource(bevy::pbr::PointLightShadowMap { size: 512 })
+        .add_plugins(
+            DefaultPlugins
+                .set(RenderPlugin {
+                    render_creation: RenderCreation::Automatic(WgpuSettings {
+                        backends: Some(Backends::VULKAN),
+                        ..default()
+                    }),
+                    ..default()
+                })
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        present_mode: PresentMode::AutoVsync,
+                        ..default()
+                    }),
+                    ..default()
+                }),
+        )
+        .add_plugins(UniversalCameraControllerPlugin)
         .add_systems(Startup, setup_tmp_world_env)
-        .add_systems(Update, rotation_system)
         .run();
 }
 
@@ -33,10 +42,6 @@ fn setup_tmp_world_env(
     asset_server: Res<AssetServer>,
 ) {
     let material_dir: PathBuf = PathBuf::from("Pond Side Grassy and Muddy Land 2k");
-    // let color = material_dir.join("color.png");
-    // let normal = material_dir.join("normal_opengl.png");
-    // let ao = material_dir.join("ao.png");
-    // let metallic_roughness = material_dir.join("metallic_roughness.png");
 
     let color = material_dir.join("color.ktx2"); // toktx --t2 --genmipmap --encode uastc --uastc_quality 3 --filter lanczos4 --convert_oetf srgb --assign_oetf srgb --zcmp 20 color.ktx2 color.png
     let normal = material_dir.join("normal_opengl.ktx2"); // toktx --t2 --genmipmap --encode uastc --uastc_quality 3 --filter lanczos4 --convert_oetf srgb --assign_oetf linear --zcmp 20 normal_opengl.ktx2 normal_opengl.png
@@ -76,29 +81,11 @@ fn setup_tmp_world_env(
 
     let mesh_handle = meshes.add(mesh);
 
-    // for x in -5..5 {
-    //     for z in -5..5 {
-    //         commands.spawn((
-    //             Mesh3d(mesh_handle.clone()),
-    //             MeshMaterial3d(material.clone()),
-    //             Transform::from_xyz((x * 2) as f32, 0.0, (z * 2) as f32)
-    //                 .with_scale(Vec3::splat(2.0)),
-    //         ));
-    //     }
-    // }
-
     commands.spawn((
         Mesh3d(mesh_handle.clone()),
         MeshMaterial3d(material.clone()),
         Transform::from_translation(Vec3::splat(0.0)).with_scale(Vec3::splat(20.0)),
     ));
-
-    // Cube
-    // commands.spawn((
-    //     Mesh3d(meshes.add(Cuboid::default())),
-    //     MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-    //     Transform::from_xyz(0.0, 0.5, 0.0),
-    // ));
 
     // Light
     commands.spawn((
@@ -120,6 +107,7 @@ fn setup_tmp_world_env(
         Transform::from_xyz(-7.0, 10.0, -7.0).looking_at(Vec3::ZERO, Vec3::Y),
         Bloom::NATURAL,
         Msaa::default(),
+        UniversalCameraController::flying_camera(),
     ));
 }
 
