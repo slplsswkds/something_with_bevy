@@ -1,6 +1,5 @@
 mod universal_camera_controller;
 use bevy::core_pipeline::bloom::Bloom;
-use bevy::ecs::system::SystemParam;
 use bevy::image::ImageLoaderSettings;
 use bevy::prelude::*;
 use bevy::render::{
@@ -115,10 +114,4 @@ fn setup_tmp_world_env(
         Msaa::default(),
         UniversalCameraController::spherical_camera(),
     ));
-}
-
-fn rotation_system(time: Res<Time>, mut query: Query<&mut Transform, Without<Camera>>) {
-    for mut transform in query.iter_mut() {
-        transform.rotate(Quat::from_rotation_y(time.delta_secs() / 10.0)); // Обертання навколо осі Y
-    }
 }

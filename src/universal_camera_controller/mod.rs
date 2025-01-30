@@ -7,15 +7,17 @@ use bevy::ecs::system::SystemParam;
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
 
+#[allow(unused_imports)]
 pub mod prelude {
     pub use super::flying_camera::FlyingCamera;
     pub use super::spherical_camera::SphericalCamera;
     pub use super::UniversalCameraController;
     pub use super::UniversalCameraControllerPlugin;
+    pub use super::UniversalCameraControllerSettings;
 }
 
 #[derive(Resource)]
-struct UniversalCameraControllerSettings {
+pub struct UniversalCameraControllerSettings {
     sensibility_vertical: f32,
     sensibility_horizontal: f32,
 }
@@ -65,12 +67,14 @@ pub struct UniversalCameraController {
     mode: Box<dyn UniversalCameraControllerTrait>,
 }
 
+#[allow(dead_code)]
 impl UniversalCameraController {
     pub fn spherical_camera() -> Self {
         Self {
             mode: Box::new(SphericalCamera::default()),
         }
     }
+
     pub fn flying_camera() -> Self {
         Self {
             mode: Box::new(FlyingCamera::default()),
