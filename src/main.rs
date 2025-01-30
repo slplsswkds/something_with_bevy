@@ -7,6 +7,7 @@ use bevy::render::{
     settings::{Backends, RenderCreation, WgpuSettings},
     RenderPlugin,
 };
+use bevy::window::CursorGrabMode::Locked;
 use bevy::window::*;
 use std::path::PathBuf;
 use universal_camera_controller::prelude::*;
@@ -25,6 +26,11 @@ fn main() {
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         present_mode: PresentMode::AutoVsync,
+                        cursor_options: CursorOptions {
+                            grab_mode: Locked,
+                            visible: false,
+                            ..default()
+                        },
                         ..default()
                     }),
                     ..default()
@@ -107,7 +113,7 @@ fn setup_tmp_world_env(
         Transform::from_xyz(-7.0, 10.0, -7.0).looking_at(Vec3::ZERO, Vec3::Y),
         Bloom::NATURAL,
         Msaa::default(),
-        UniversalCameraController::flying_camera(),
+        UniversalCameraController::spherical_camera(),
     ));
 }
 
