@@ -13,7 +13,7 @@ pub struct FlyingCamera {
 impl Default for FlyingCamera {
     fn default() -> Self {
         Self {
-            sensibility: 0.003,
+            sensibility: 0.002,
             speed: 100.0,
             pitch: 0.0,
             yaw: 0.0,
@@ -30,35 +30,40 @@ impl UniversalCameraControllerTrait for FlyingCamera {
 
 impl FlyingCamera {
     fn update_position(&mut self, bridge: &mut UniversalCameraControllerBridge) {
-        let mut cam_transform = bridge.cam_transform.get_single_mut().unwrap();
-
-        let forward = (cam_transform.rotation * Vec3::Z).normalize();
-        let right = (cam_transform.rotation * Vec3::X).normalize();
-
-        let delta_move = self.speed * bridge.res_time.delta_secs();
-
-        let mut desired_position = cam_transform.translation;
-
-        if bridge.keys.pressed(KeyCode::KeyW) {
-            desired_position -= forward * delta_move;
-        }
-        if bridge.keys.pressed(KeyCode::KeyS) {
-            desired_position += forward * delta_move;
-        }
-        if bridge.keys.pressed(KeyCode::KeyD) {
-            desired_position += right * delta_move;
-        }
-        if bridge.keys.pressed(KeyCode::KeyA) {
-            desired_position -= right * delta_move;
-        }
-        if bridge.keys.pressed(KeyCode::Space) {
-            desired_position.y += delta_move;
-        }
-        if bridge.keys.pressed(KeyCode::ControlLeft) {
-            desired_position.y -= delta_move;
+        #[cfg(debug_assertions)]
+        if bridge.cam_transform.is_empty() {
+            warn!("FlyingCamera::update_position: no camera found")
         }
 
-        cam_transform.translation = cam_transform.translation.lerp(desired_position, 0.1);
+        for mut cam_transform in bridge.cam_transform.iter_mut() {
+            let forward = (cam_transform.rotation * Vec3::Z).normalize();
+            let right = (cam_transform.rotation * Vec3::X).normalize();
+
+            let delta_move = self.speed * bridge.res_time.delta_secs();
+
+            let mut desired_position = cam_transform.translation;
+
+            if bridge.keys.pressed(KeyCode::KeyW) {
+                desired_position -= forward * delta_move;
+            }
+            if bridge.keys.pressed(KeyCode::KeyS) {
+                desired_position += forward * delta_move;
+            }
+            if bridge.keys.pressed(KeyCode::KeyD) {
+                desired_position += right * delta_move;
+            }
+            if bridge.keys.pressed(KeyCode::KeyA) {
+                desired_position -= right * delta_move;
+            }
+            if bridge.keys.pressed(KeyCode::Space) {
+                desired_position.y += delta_move;
+            }
+            if bridge.keys.pressed(KeyCode::ControlLeft) {
+                desired_position.y -= delta_move;
+            }
+
+            cam_transform.translation = cam_transform.translation.lerp(desired_position, 0.1);
+        }
     }
 
     fn update_view(&mut self, bridge: &mut UniversalCameraControllerBridge) {
