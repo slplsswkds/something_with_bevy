@@ -32,7 +32,7 @@ struct BuildingSettings {
 #[derive(Resource)]
 struct BuildingAssets {
     cube_mesh: Handle<Mesh>,
-    cube_material: Handle<StandardMaterial>,
+    preview_material: Handle<StandardMaterial>,
 }
 
 impl Default for BuildingSettings {
@@ -89,7 +89,7 @@ fn load_building_assets(
     let cube_material = materials.add(Color::srgba(0.5, 0.5, 1.0, 0.5));
     commands.insert_resource(BuildingAssets {
         cube_mesh,
-        cube_material,
+        preview_material: cube_material,
     });
     // wait while resources loading !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     building_readiness_state.set(BuildingReadinessState::Ready);
@@ -99,7 +99,7 @@ fn load_building_assets(
 // ---------- Building Mode
 fn init_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
     let cube_mesh = assets.cube_mesh.clone();
-    let cube_material = assets.cube_material.clone();
+    let cube_material = assets.preview_material.clone();
     commands.spawn((
         Mesh3d(cube_mesh),
         MeshMaterial3d(cube_material),
@@ -110,6 +110,7 @@ fn init_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
 
 fn building_system(
     mut commands: Commands,
+    mut preview_building: Query<&Transform, With<PreviewBuilding>>,
     mut cam_query: Query<&Transform, With<UniversalCameraController>>,
     buttons: Res<ButtonInput<MouseButton>>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -117,24 +118,16 @@ fn building_system(
 ) {
     let cam_transform = cam_query.get_single_mut().unwrap();
 
+    let preview_building = preview_building.get_single_mut().expect(
+        "No building previews found or them total number is more than 1. \
+        Building mode initialisation is not correct",
+    );
+
     if buttons.just_pressed(MouseButton::Left) {
-        // enter edit mode
-        // show preview building (cube)
-
-        // Calculate the position in front of the camera (1 meter in front)
-        let distance_in_front = 5.0; // Distance in meters
-        let camera_position = cam_transform.translation;
-        let camera_forward = cam_transform.rotation * Vec3::NEG_Z; // Forward direction is along the negative Z-axis
-
-        // Position the cube a distance in front of the camera
-        let cube_position = camera_position + camera_forward * distance_in_front;
-
-        // Spawn the cube at the calculated position, without attaching it as a child of the camera
         commands.spawn((
             Mesh3d(meshes.add(Cuboid::from_size(Vec3::splat(1.000001)))),
-            MeshMaterial3d(materials.add(Color::srgba(0.5, 0.5, 1.0, 0.5))),
-            Transform::from_translation(cube_position),
-            PreviewBuilding,
+            MeshMaterial3d(materials.add(Color::srgba(1.0, 0.6, 0.8, 1.0))),
+            preview_building.clone(),
         ));
     } else if buttons.just_released(MouseButton::Left) {
         // exit edit mode
