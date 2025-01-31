@@ -1,4 +1,7 @@
+mod building;
 mod universal_camera_controller;
+
+use crate::building::prelude::*;
 use bevy::core_pipeline::bloom::Bloom;
 use bevy::image::ImageLoaderSettings;
 use bevy::prelude::*;
@@ -36,6 +39,7 @@ fn main() {
                 }),
         )
         .add_plugins(UniversalCameraControllerPlugin)
+        .add_plugins(BuildingPlugin)
         .add_systems(Startup, setup_tmp_world_env)
         .run();
 }
@@ -86,12 +90,12 @@ fn setup_tmp_world_env(
 
     let mesh_handle = meshes.add(mesh);
 
-    // Cube
-    commands.spawn((
-        Mesh3d(meshes.add(Cuboid::default())),
-        MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-        Transform::from_xyz(0.0, 0.5, 0.0),
-    ));
+    // // Cube
+    // commands.spawn((
+    //     Mesh3d(meshes.add(Cuboid::default())),
+    //     MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
+    //     Transform::from_xyz(0.0, 0.5, 0.0),
+    // ));
 
     // Ground
     commands.spawn((
