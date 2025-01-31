@@ -20,13 +20,15 @@ pub mod prelude {
 pub struct UniversalCameraControllerSettings {
     sensibility_vertical: f32,
     sensibility_horizontal: f32,
+    speed: f32,
 }
 
 impl Default for UniversalCameraControllerSettings {
     fn default() -> Self {
         Self {
-            sensibility_vertical: 0.0015,
-            sensibility_horizontal: 0.002,
+            sensibility_vertical: 0.001,
+            sensibility_horizontal: 0.0015,
+            speed: 10.0,
         }
     }
 }
@@ -72,9 +74,9 @@ fn universal_camera_controller_mode_switching_system(
 
 #[derive(SystemParam)]
 struct UniversalCameraControllerBridge<'w, 's> {
-    res_time: Res<'w, Time>,
-    res_settings: Res<'w, UniversalCameraControllerSettings>,
-    cam_transform: Query<'w, 's, &'static mut Transform, With<Camera3d>>,
+    time: Res<'w, Time>,
+    settings: Res<'w, UniversalCameraControllerSettings>,
+    cam_transform: Query<'w, 's, &'static mut Transform, With<UniversalCameraController>>,
     evr_mouse_movement: EventReader<'w, 's, MouseMotion>,
     keys: Res<'w, ButtonInput<KeyCode>>,
 }

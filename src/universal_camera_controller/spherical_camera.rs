@@ -1,5 +1,5 @@
 use super::{UniversalCameraControllerBridge, UniversalCameraControllerTrait};
-use bevy::math::{Dir3, Mat3, Quat};
+use bevy::math::{Mat3, Quat};
 use bevy::prelude::{Component, Vec3};
 
 #[allow(dead_code)]
@@ -34,8 +34,8 @@ impl UniversalCameraControllerTrait for SphericalCamera {
         }
 
         // Calculating camera rotation
-        self.phi -= bridge.res_settings.sensibility_horizontal * total_delta_x;
-        self.theta += bridge.res_settings.sensibility_vertical * total_delta_y;
+        self.phi -= bridge.settings.sensibility_horizontal * total_delta_x;
+        self.theta += bridge.settings.sensibility_vertical * total_delta_y;
         self.theta = self.theta.clamp(10_f32.to_radians(), 89.9_f32.to_radians());
 
         // Calculating new camera position
@@ -57,18 +57,15 @@ impl UniversalCameraControllerTrait for SphericalCamera {
             Quat::from_mat3(&Mat3::from_cols(right, up_corrected, look_at_direction));
 
         // Smooth interpolation factor based on delta time
-        let t = 1.0 - (-30.0 * bridge.res_time.delta_secs()).exp();
+        let t = 1.0 - (-30.0 * bridge.time.delta_secs()).exp();
 
         // Apply the transformations to the camera
-        bridge
-            .cam_transform
-            .iter_mut()
-            .for_each(|mut cam_transform| {
-                // Smoothly interpolate position
-                cam_transform.translation = cam_transform.translation.lerp(new_position, t);
+        let mut cam_transform = bridge.cam_transform.get_single_mut().unwrap();
 
-                // Smoothly interpolate rotation to make the camera face the target
-                cam_transform.rotation = cam_transform.rotation.slerp(desired_rotation, t);
-            });
+        // Smoothly interpolate position
+        cam_transform.translation = cam_transform.translation.lerp(new_position, t);
+
+        // Smoothly interpolate rotation to make the camera face the target
+        cam_transform.rotation = cam_transform.rotation.slerp(desired_rotation, t);
     }
 }
