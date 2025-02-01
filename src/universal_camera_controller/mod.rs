@@ -28,7 +28,7 @@ impl Default for UniversalCameraControllerSettings {
         Self {
             sensibility_vertical: 0.001,
             sensibility_horizontal: 0.0015,
-            speed: 10.0,
+            speed: 7.0,
         }
     }
 }

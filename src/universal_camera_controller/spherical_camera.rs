@@ -15,7 +15,7 @@ impl Default for SphericalCamera {
     fn default() -> Self {
         Self {
             desired_position: Vec3::ZERO,
-            radius: 10.0,
+            radius: 3.0,
             theta: 0.0,
             phi: 0.0,
         }
