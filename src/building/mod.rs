@@ -9,7 +9,7 @@ pub mod prelude {
 
 #[derive(States, Default, Debug, Clone, PartialEq, Eq, Hash)]
 enum BuildingReadinessState {
-    Disabled,
+    NotReady,
     #[default]
     Loading,
     Ready,
@@ -33,6 +33,7 @@ struct BuildingSettings {
 struct BuildingAssets {
     cube_mesh: Handle<Mesh>,
     preview_material: Handle<StandardMaterial>,
+    wall: Handle<Scene>,
 }
 
 impl Default for BuildingSettings {
@@ -81,15 +82,17 @@ impl Plugin for BuildingPlugin {
 fn load_building_assets(
     mut commands: Commands,
     mut building_readiness_state: ResMut<NextState<BuildingReadinessState>>,
-    asset_server: Res<AssetServer>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    asset_server: Res<AssetServer>,
 ) {
     let cube_mesh = meshes.add(Cuboid::from_size(Vec3::splat(1.000001)));
     let cube_material = materials.add(Color::srgba(0.5, 0.5, 1.0, 0.5));
     commands.insert_resource(BuildingAssets {
         cube_mesh,
         preview_material: cube_material,
+        wall: asset_server
+            .load(GltfAssetLabel::Scene(0).from_asset("Medieval Timbered Wall 2k/wall.gltf")),
     });
     // wait while resources loading !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     building_readiness_state.set(BuildingReadinessState::Ready);
@@ -98,6 +101,7 @@ fn load_building_assets(
 
 // ---------- Building Mode
 fn init_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
+    // show UI with building menu
     let cube_mesh = assets.cube_mesh.clone();
     let cube_material = assets.preview_material.clone();
     commands.spawn((
@@ -111,13 +115,10 @@ fn init_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
 fn building_system(
     mut commands: Commands,
     mut preview_building: Query<&Transform, With<PreviewBuilding>>,
-    mut cam_query: Query<&Transform, With<UniversalCameraController>>,
     buttons: Res<ButtonInput<MouseButton>>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let cam_transform = cam_query.get_single_mut().unwrap();
-
     let preview_building = preview_building.get_single_mut().expect(
         "No building previews found or them total number is more than 1. \
         Building mode initialisation is not correct",
@@ -167,7 +168,6 @@ fn deinit_building_mode(
         commands.entity(entity).despawn();
     });
 }
-
 // ------------------------------
 
 #[derive(Event)]

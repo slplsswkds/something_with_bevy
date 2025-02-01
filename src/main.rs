@@ -142,23 +142,7 @@ fn setup_tmp_world_env(
     ));
 }
 
-fn spawn_wall(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    asset_server: Res<AssetServer>,
-) {
-    let material_dir: PathBuf = PathBuf::from("Medieval Timbered Wall 2k");
-
-    let color = material_dir.join("base_color.ktx2"); // toktx --t2 --genmipmap --encode uastc --uastc_quality 3 --filter lanczos4 --convert_oetf srgb --assign_oetf srgb --zcmp 20 base_color.ktx2 base_color.png
-    let normal = material_dir.join("normal_opengl.ktx2"); // toktx --t2 --genmipmap --encode uastc --uastc_quality 3 --filter lanczos4 --convert_oetf srgb --assign_oetf linear --zcmp 20 normal_opengl.ktx2 normal_opengl.png
-    let ao = material_dir.join("ao.ktx2"); // toktx --t2 --genmipmap --encode uastc --uastc_quality 3 --filter lanczos4 --convert_oetf linear --assign_oetf linear --zcmp 20 ao.ktx2 ao.png
-    let metallic_roughness = material_dir.join("metallic_roughness.ktx2"); // toktx --t2 --genmipmap --encode uastc --uastc_quality 3 --filter lanczos4 --convert_oetf linear --assign_oetf linear --zcmp 20 metallic_roughness.ktx2 metallic_roughness.png
-
-    // let mesh_handle: Handle<Mesh> =
-    //     // asset_server.load(GltfAssetLabel::Mesh(0).from_asset("Medieval Timbered Wall 2k/wall.glb"));
-    //     asset_server.load("Medieval Timbered Wall 2k/wall.glb");
-    //
+fn spawn_wall(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         SceneRoot(
             asset_server
@@ -166,12 +150,4 @@ fn spawn_wall(
         ),
         Transform::from_translation(Vec3::new(-1.0, 1.0, 0.0)),
     ));
-    // let wall_mesh = asset_server
-    //     .load(GltfAssetLabel::Mesh(0).from_asset("Medieval Timbered Wall 2k/wall.gltf"));
-
-    // commands.spawn((
-    //     Mesh3d(wall_mesh),
-    //     MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-    //     Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
-    // ));
 }
