@@ -42,6 +42,7 @@ fn main() {
         .add_plugins(BuildingPlugin)
         .add_systems(Startup, setup_tmp_world_env)
         .add_systems(Startup, spawn_wall)
+        .add_systems(Update, cast_ray_from_camera)
         .run();
 }
 
@@ -150,4 +151,27 @@ fn spawn_wall(mut commands: Commands, asset_server: Res<AssetServer>) {
         ),
         Transform::from_translation(Vec3::new(-1.0, 1.0, 0.0)),
     ));
+}
+
+fn cast_ray_from_camera(
+    camera_query: Query<&GlobalTransform, With<UniversalCameraController>>,
+    mut ray_cast: MeshRayCast,
+) {
+    if let Ok(camera_transform) = camera_query.get_single() {
+        let origin = camera_transform.translation();
+        let direction = camera_transform.forward();
+
+        let ray = Ray3d::new(origin, direction);
+
+        let settings = RayCastSettings::default();
+
+        let hits = ray_cast.cast_ray(ray, &settings);
+
+        for (entity, hit) in hits {
+            println!(
+                "The ray hit the object {:?} at point {:?}",
+                entity, hit.point
+            );
+        }
+    }
 }
