@@ -1,6 +1,9 @@
 mod flying_camera;
+mod ray_casting;
 mod spherical_camera;
 
+use crate::universal_camera_controller::prelude::RayCaster;
+use crate::universal_camera_controller::ray_casting::cast_ray_from_universal_camera_controller;
 use crate::FlyingCamera;
 use crate::SphericalCamera;
 use bevy::ecs::system::SystemParam;
@@ -10,6 +13,7 @@ use bevy::prelude::*;
 #[allow(unused_imports)]
 pub mod prelude {
     pub use super::flying_camera::FlyingCamera;
+    pub use super::ray_casting::RayCaster;
     pub use super::spherical_camera::SphericalCamera;
     pub use super::UniversalCameraController;
     pub use super::UniversalCameraControllerPlugin;
@@ -37,12 +41,14 @@ pub struct UniversalCameraControllerPlugin;
 
 impl Plugin for UniversalCameraControllerPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<UniversalCameraControllerSettings>()
+        app.init_resource::<RayCaster>()
+            .init_resource::<UniversalCameraControllerSettings>()
             .add_systems(
                 Update,
                 (
                     universal_camera_controller_mode_switching_system,
                     universal_camera_controller_system,
+                    cast_ray_from_universal_camera_controller,
                 ),
             );
     }
