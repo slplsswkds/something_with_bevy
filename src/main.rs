@@ -3,6 +3,7 @@ mod universal_camera_controller;
 
 use crate::building::prelude::*;
 use bevy::core_pipeline::bloom::Bloom;
+use bevy::core_pipeline::motion_blur::MotionBlur;
 use bevy::image::ImageLoaderSettings;
 use bevy::prelude::*;
 use bevy::render::{
@@ -11,6 +12,7 @@ use bevy::render::{
 };
 use bevy::window::CursorGrabMode::Locked;
 use bevy::window::*;
+
 use std::path::PathBuf;
 use universal_camera_controller::prelude::*;
 
@@ -42,7 +44,7 @@ fn main() {
         .add_plugins(BuildingPlugin)
         .add_systems(Startup, setup_tmp_world_env)
         .add_systems(Startup, spawn_wall)
-        .add_systems(Update, cast_ray_from_camera)
+        // .add_systems(Update, cast_ray_from_camera)
         .run();
 }
 
@@ -140,6 +142,11 @@ fn setup_tmp_world_env(
         Bloom::NATURAL,
         Msaa::default(),
         UniversalCameraController::spherical_camera(),
+        MotionBlur {
+            shutter_angle: 0.5,
+            samples: 1,
+            ..default()
+        },
     ));
 }
 

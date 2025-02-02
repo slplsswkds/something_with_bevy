@@ -1,5 +1,7 @@
+mod building_assets;
 use super::UniversalCameraController;
 use bevy::prelude::*;
+use building_assets::{BuildingAssets, BuildingAssetsInitBridge};
 
 #[allow(unused_imports)]
 pub mod prelude {
@@ -27,13 +29,6 @@ pub enum BuildingMode {
 #[derive(Resource)]
 struct BuildingSettings {
     grid_size: f32,
-}
-
-#[derive(Resource)]
-struct BuildingAssets {
-    cube_mesh: Handle<Mesh>,
-    preview_material: Handle<StandardMaterial>,
-    wall: Handle<Scene>,
 }
 
 impl Default for BuildingSettings {
@@ -82,18 +77,9 @@ impl Plugin for BuildingPlugin {
 fn load_building_assets(
     mut commands: Commands,
     mut building_readiness_state: ResMut<NextState<BuildingReadinessState>>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    asset_server: Res<AssetServer>,
+    bridge: BuildingAssetsInitBridge,
 ) {
-    let cube_mesh = meshes.add(Cuboid::from_size(Vec3::splat(1.000001)));
-    let cube_material = materials.add(Color::srgba(0.5, 0.5, 1.0, 0.5));
-    commands.insert_resource(BuildingAssets {
-        cube_mesh,
-        preview_material: cube_material,
-        wall: asset_server
-            .load(GltfAssetLabel::Scene(0).from_asset("Medieval Timbered Wall 2k/wall.gltf")),
-    });
+    commands.insert_resource(BuildingAssets::load_all(bridge));
     // wait while resources loading !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     building_readiness_state.set(BuildingReadinessState::Ready);
     info!("BuildingReadinessState::Ready");
@@ -102,37 +88,20 @@ fn load_building_assets(
 // ---------- Building Mode
 fn init_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
     // show UI with building menu
-    let cube_mesh = assets.cube_mesh.clone();
-    let cube_material = assets.preview_material.clone();
-    commands.spawn((
-        Mesh3d(cube_mesh),
-        MeshMaterial3d(cube_material),
-        PreviewBuilding,
-    ));
-    info!("init_building_mode completed");
+    let wall: Handle<Scene> = assets.wall.wall_2x2.clone();
+    commands.spawn((SceneRoot(wall), PreviewBuilding));
+    info!("init_building_mode fake completed");
 }
 
 fn building_system(
     mut commands: Commands,
-    mut preview_building: Query<&Transform, With<PreviewBuilding>>,
+    // mut preview_building: Query<&Transform, With<PreviewBuilding>>,
+    mut preview_building: Query<(&SceneRoot, &Transform), With<PreviewBuilding>>,
     buttons: Res<ButtonInput<MouseButton>>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let preview_building = preview_building.get_single_mut().expect(
-        "No building previews found or them total number is more than 1. \
-        Building mode initialisation is not correct",
-    );
-
+    let (root, transform) = preview_building.single();
     if buttons.just_pressed(MouseButton::Left) {
-        commands.spawn((
-            Mesh3d(meshes.add(Cuboid::from_size(Vec3::splat(1.000001)))),
-            MeshMaterial3d(materials.add(Color::srgba(1.0, 0.6, 0.8, 1.0))),
-            preview_building.clone(),
-        ));
-    } else if buttons.just_released(MouseButton::Left) {
-        // exit edit mode
-        // destroy preview building (cube)
+        commands.spawn((root.clone(), transform.clone()));
     }
 }
 
