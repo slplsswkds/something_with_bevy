@@ -51,7 +51,7 @@ impl BuildingAsset for Roof {
     fn load(bridge: &mut BuildingAssetsInitBridge) -> Self {
         let roof_2x2_45: Handle<Scene> = bridge
             .asset_server
-            .load(GltfAssetLabel::Scene(0).from_asset("Roof/wall.gltf"));
+            .load(GltfAssetLabel::Scene(0).from_asset("Orange Clay Rooftop Tiles 2k/roof.gltf"));
         Self { roof_2x2_45 }
     }
 }

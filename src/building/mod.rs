@@ -88,8 +88,9 @@ fn load_building_assets(
 // ---------- Building Mode
 fn init_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
     // show UI with building menu
-    let wall: Handle<Scene> = assets.wall.wall_2x2.clone();
-    commands.spawn((SceneRoot(wall), PreviewBuilding));
+    // let preview: Handle<Scene> = assets.wall.wall_2x2.clone();
+    let preview: Handle<Scene> = assets.roof.roof_2x2_45.clone();
+    commands.spawn((SceneRoot(preview), PreviewBuilding));
     info!("init_building_mode fake completed");
 }
 
