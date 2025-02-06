@@ -150,11 +150,14 @@ fn setup_tmp_world_env(
 }
 
 fn spawn_wall(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let wall_scene = asset_server
+        .load(GltfAssetLabel::Scene(0).from_asset("Medieval Timbered Wall 2k/wall.gltf"));
     commands.spawn((
-        SceneRoot(
-            asset_server
-                .load(GltfAssetLabel::Scene(0).from_asset("Medieval Timbered Wall 2k/wall.gltf")),
-        ),
+        SceneRoot(wall_scene.clone()),
         Transform::from_translation(Vec3::new(-1.0, 1.0, 0.0)),
+    ));
+    commands.spawn((
+        SceneRoot(wall_scene.clone()),
+        Transform::from_translation(Vec3::new(-1.0, 1.0, 2.0)),
     ));
 }

@@ -1,7 +1,9 @@
 mod building_assets;
 use super::UniversalCameraController;
+use bevy::input::mouse::MouseWheel;
 use bevy::prelude::*;
 use building_assets::{BuildingAssets, BuildingAssetsInitBridge};
+use bevy::input::mouse::MouseScrollUnit;
 
 #[allow(unused_imports)]
 pub mod prelude {
@@ -113,13 +115,30 @@ fn update_preview_building_position(
         Query<&Transform, With<UniversalCameraController>>,
     )>,
     building_settings: Res<BuildingSettings>,
+    mut evr_scroll: EventReader<MouseWheel>,
 ) {
     let cam_transform = params.p1().get_single().unwrap().clone();
+
+    let mut vertical_scroll = 0_f32;
+    evr_scroll.read().enumerate().for_each(|(idx, scroll)| {
+        match scroll.unit {
+            MouseScrollUnit::Line => {
+                vertical_scroll += scroll.y;
+                println!("Scroll (line units): vertical: {}, horizontal: {}", scroll.y, scroll.x);
+            }
+            MouseScrollUnit::Pixel => {
+                println!("Scroll (pixel units): vertical: {}, horizontal: {}", scroll.y, scroll.x);
+            }
+        }
+    });
 
     params.p0().iter_mut().for_each(|mut transform| {
         transform
             .translation
             .round_to_step(building_settings.grid_size);
+
+        let rotation = Quat::from_rotation_y(vertical_scroll * 15_f32.to_radians());
+        transform.rotation *= rotation;
 
         let distance_in_front = 7.0;
         let camera_position = cam_transform.translation;
