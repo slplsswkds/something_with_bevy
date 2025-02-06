@@ -14,7 +14,7 @@ impl Default for RayCaster {
 pub fn cast_ray_from_universal_camera_controller(
     camera_query: Query<&GlobalTransform, With<UniversalCameraController>>,
     mut ray_cast: MeshRayCast,
-    mut ray_caster: ResMut<RayCaster>,
+    ray_caster: Res<RayCaster>,
 ) {
     if let Ok(camera_transform) = camera_query.get_single() {
         let origin = camera_transform.translation();

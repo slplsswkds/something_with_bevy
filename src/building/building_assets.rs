@@ -70,7 +70,6 @@ impl BuildingAsset for Gable {
 pub struct BuildingAssetsInitBridge<'w> {
     asset_server: Res<'w, AssetServer>,
     materials: ResMut<'w, Assets<StandardMaterial>>,
-    meshes: ResMut<'w, Assets<Mesh>>,
 }
 
 impl BuildingAssets {

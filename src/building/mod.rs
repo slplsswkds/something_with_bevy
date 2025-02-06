@@ -1,4 +1,6 @@
 mod building_assets;
+mod building_menu;
+
 use super::UniversalCameraController;
 use bevy::input::mouse::MouseScrollUnit;
 use bevy::input::mouse::MouseWheel;
@@ -6,6 +8,7 @@ use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, PrimaryWindow};
 use bevy_egui::{egui, EguiContext, EguiContexts};
 use building_assets::{BuildingAssets, BuildingAssetsInitBridge};
+use building_menu::{building_menu, enter_building_menu, exit_building_menu};
 
 #[allow(unused_imports)]
 pub mod prelude {
@@ -57,7 +60,7 @@ impl Plugin for BuildingPlugin {
             )
             // ---------- Menu Mode
             .add_systems(OnEnter(BuildingMode::Menu), enter_building_menu)
-            .add_systems(Update, (building_menu).run_if(in_state(BuildingMode::Menu)))
+            .add_systems(Update, building_menu.run_if(in_state(BuildingMode::Menu)))
             .add_systems(OnExit(BuildingMode::Menu), exit_building_menu)
             // ---------- Building Mode
             .add_systems(OnEnter(BuildingMode::Building), init_building_mode)
@@ -84,34 +87,6 @@ fn load_building_assets(
     info!("BuildingReadinessState::Ready");
 }
 
-// ---------- Building Menu
-fn enter_building_menu(mut window: Single<&mut Window, With<PrimaryWindow>>) {
-    window.cursor_options.grab_mode = CursorGrabMode::Confined;
-    window.cursor_options.visible = true;
-}
-fn building_menu(
-    mut contexts: EguiContexts,
-    mut evw_change_build_mode: EventWriter<ChangeBuildingModeEvent>,
-    mut building_assets: ResMut<BuildingAssets>,
-) {
-    egui::Window::new("Building Menu").show(contexts.ctx_mut(), |ui| {
-        ui.collapsing("Heading", |ui| {
-            ui.label("Body");
-        });
-        ui.button("Roof").clicked().then(|| {
-            building_assets.preview_obj = Some(building_assets.roof.roof_2x2_45.clone());
-            evw_change_build_mode.send(ChangeBuildingModeEvent(BuildingMode::Building));
-        });
-        ui.button("Wall").clicked().then(|| {
-            building_assets.preview_obj = Some(building_assets.wall.wall_2x2.clone());
-            evw_change_build_mode.send(ChangeBuildingModeEvent(BuildingMode::Building));
-        });
-    });
-}
-fn exit_building_menu(mut window: Single<&mut Window, With<PrimaryWindow>>) {
-    window.cursor_options.grab_mode = CursorGrabMode::Locked;
-    window.cursor_options.visible = false;
-}
 // ---------- Building Mode
 fn init_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
     // show UI with building menu
@@ -153,17 +128,8 @@ fn update_preview_building_position(
         .for_each(|(idx, scroll)| match scroll.unit {
             MouseScrollUnit::Line => {
                 vertical_scroll += scroll.y;
-                println!(
-                    "Scroll (line units): vertical: {}, horizontal: {}",
-                    scroll.y, scroll.x
-                );
             }
-            MouseScrollUnit::Pixel => {
-                println!(
-                    "Scroll (pixel units): vertical: {}, horizontal: {}",
-                    scroll.y, scroll.x
-                );
-            }
+            MouseScrollUnit::Pixel => {}
         });
 
     params.p0().iter_mut().for_each(|mut transform| {

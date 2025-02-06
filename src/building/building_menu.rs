@@ -1,0 +1,41 @@
+use super::building_assets::BuildingAssets;
+use super::{BuildingMode, ChangeBuildingModeEvent};
+use bevy::prelude::*;
+use bevy::window::{CursorGrabMode, PrimaryWindow};
+use bevy_egui::{egui, EguiContexts};
+
+// ---------- Building Menu
+pub fn enter_building_menu(mut window: Single<&mut Window, With<PrimaryWindow>>) {
+    window.cursor_options.grab_mode = CursorGrabMode::Confined;
+    window.cursor_options.visible = true;
+}
+
+pub fn building_menu(
+    mut contexts: EguiContexts,
+    mut evw_change_build_mode: EventWriter<ChangeBuildingModeEvent>,
+    mut building_assets: ResMut<BuildingAssets>,
+) {
+    let mut go_build = || {
+        evw_change_build_mode.send(ChangeBuildingModeEvent(BuildingMode::Building));
+    };
+
+    egui::Window::new("Building Menu").show(contexts.ctx_mut(), |ui| {
+        ui.collapsing("Roof", |ui| {
+            ui.button("Roof 2x2 45°").clicked().then(|| {
+                building_assets.preview_obj = Some(building_assets.roof.roof_2x2_45.clone());
+                go_build();
+            });
+        });
+        ui.collapsing("Wall", |ui| {
+            ui.button("Wall 2x2").clicked().then(|| {
+                building_assets.preview_obj = Some(building_assets.wall.wall_2x2.clone());
+                go_build();
+            });
+        });
+    });
+}
+
+pub fn exit_building_menu(mut window: Single<&mut Window, With<PrimaryWindow>>) {
+    window.cursor_options.grab_mode = CursorGrabMode::Locked;
+    window.cursor_options.visible = false;
+}

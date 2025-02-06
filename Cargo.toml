@@ -1,6 +1,6 @@
 [package]
 name = "something_with_bevy"
-version = "0.5.0"
+version = "0.5.1"
 edition = "2021"
 
 # ------------------------- Enable a small amount of optimization in the dev profile.
