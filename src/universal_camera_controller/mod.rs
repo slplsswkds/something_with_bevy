@@ -105,13 +105,13 @@ struct Bridge<'w, 's> {
     keys: Res<'w, ButtonInput<KeyCode>>,
 }
 
-trait UniversalCameraTrait: Send + Sync {
+trait UniCamTrait: Send + Sync {
     fn update(&mut self, bridge: &mut Bridge);
 }
 
 #[derive(Component)]
 pub struct UniCamController {
-    mode: Box<dyn UniversalCameraTrait>,
+    mode: Box<dyn UniCamTrait>,
 }
 
 #[allow(dead_code)]

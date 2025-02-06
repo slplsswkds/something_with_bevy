@@ -1,4 +1,4 @@
-use super::{Bridge, UniversalCameraTrait};
+use super::{Bridge, UniCamTrait};
 // use bevy::prelude::{Component, EulerRot, KeyCode, Quat, Vec3};
 use bevy::prelude::*;
 
@@ -19,7 +19,7 @@ impl Default for FlyingCamera {
     }
 }
 
-impl UniversalCameraTrait for FlyingCamera {
+impl UniCamTrait for FlyingCamera {
     fn update(&mut self, bridge: &mut Bridge) {
         self.update_position(bridge);
         self.update_view(bridge);

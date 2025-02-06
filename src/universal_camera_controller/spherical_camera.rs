@@ -1,4 +1,4 @@
-use super::{Bridge, UniversalCameraTrait};
+use super::{Bridge, UniCamTrait};
 use bevy::math::{Mat3, Quat};
 use bevy::prelude::{Component, Vec3};
 
@@ -22,7 +22,7 @@ impl Default for SphericalCamera {
     }
 }
 
-impl UniversalCameraTrait for SphericalCamera {
+impl UniCamTrait for SphericalCamera {
     fn update(&mut self, bridge: &mut Bridge) {
         let mut total_delta_x = 0.0;
         let mut total_delta_y = 0.0;
