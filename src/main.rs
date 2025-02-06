@@ -42,7 +42,7 @@ fn main() {
                 }),
         )
         .add_plugins(EguiPlugin)
-        .add_plugins(UniversalCameraControllerPlugin)
+        .add_plugins(UniCamPlugin)
         .add_plugins(BuildingPlugin)
         .add_systems(Startup, setup_tmp_world_env)
         .add_systems(Startup, spawn_wall)
@@ -142,7 +142,7 @@ fn setup_tmp_world_env(
         },
         Bloom::NATURAL,
         Msaa::default(),
-        UniversalCameraController::spherical_camera(),
+        UniCamController::spherical_camera(),
         MotionBlur {
             shutter_angle: 0.5,
             samples: 1,

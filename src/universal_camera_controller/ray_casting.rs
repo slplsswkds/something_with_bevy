@@ -1,4 +1,4 @@
-use super::UniversalCameraController;
+use super::UniCamController;
 use bevy::prelude::*;
 
 /// Contains the entity the UniversalCameraController is looking at
@@ -11,8 +11,8 @@ impl Default for RayCaster {
     }
 }
 
-pub fn cast_ray_from_universal_camera_controller(
-    camera_query: Query<&GlobalTransform, With<UniversalCameraController>>,
+pub fn uni_cam_ray_cast(
+    camera_query: Query<&GlobalTransform, With<UniCamController>>,
     mut ray_cast: MeshRayCast,
     ray_caster: Res<RayCaster>,
 ) {

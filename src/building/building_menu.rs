@@ -1,19 +1,23 @@
 use super::building_assets::BuildingAssets;
 use super::{BuildingMode, ChangeBuildingModeEvent};
+use crate::universal_camera_controller::{UniCamState, UniCamChangeStateEvent};
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
 
-// ---------- Building Menu
-pub fn enter_building_menu(mut window: Single<&mut Window, With<PrimaryWindow>>) {
+pub fn enter_building_menu(
+    mut window: Single<&mut Window, With<PrimaryWindow>>,
+    mut evw_change_universal_cam: EventWriter<UniCamChangeStateEvent>,
+) {
     window.cursor_options.grab_mode = CursorGrabMode::Confined;
     window.cursor_options.visible = true;
+    evw_change_universal_cam.send(UniCamChangeStateEvent(UniCamState::Disabled));
 }
 
 pub fn building_menu(
     mut contexts: EguiContexts,
-    mut evw_change_build_mode: EventWriter<ChangeBuildingModeEvent>,
     mut building_assets: ResMut<BuildingAssets>,
+    mut evw_change_build_mode: EventWriter<ChangeBuildingModeEvent>,
 ) {
     let mut go_build = || {
         evw_change_build_mode.send(ChangeBuildingModeEvent(BuildingMode::Building));
@@ -35,7 +39,12 @@ pub fn building_menu(
     });
 }
 
-pub fn exit_building_menu(mut window: Single<&mut Window, With<PrimaryWindow>>) {
+pub fn exit_building_menu(
+    mut window: Single<&mut Window, With<PrimaryWindow>>,
+    mut camera_controller_state: ResMut<NextState<UniCamState>>,
+    mut evw_change_camera_controller_state: EventWriter<UniCamChangeStateEvent>,
+) {
     window.cursor_options.grab_mode = CursorGrabMode::Locked;
     window.cursor_options.visible = false;
+    evw_change_camera_controller_state.send(UniCamChangeStateEvent(UniCamState::Enabled));
 }

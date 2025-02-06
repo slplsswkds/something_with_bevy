@@ -2,7 +2,7 @@ mod building;
 mod building_assets;
 mod building_menu;
 
-use super::UniversalCameraController;
+use super::UniCamController;
 use bevy::input::mouse::MouseScrollUnit;
 use bevy::input::mouse::MouseWheel;
 use bevy::prelude::*;

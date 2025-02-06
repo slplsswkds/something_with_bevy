@@ -1,6 +1,6 @@
 use super::building_assets::BuildingAssets;
 use super::{BuildingSettings, PreviewBuilding, RoundToStep};
-use crate::universal_camera_controller::UniversalCameraController;
+use crate::universal_camera_controller::UniCamController;
 use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
 use bevy::prelude::*;
 
@@ -30,7 +30,7 @@ pub fn building_system(
 pub fn update_preview_building_position(
     mut params: ParamSet<(
         Query<&mut Transform, With<PreviewBuilding>>,
-        Query<&Transform, With<UniversalCameraController>>,
+        Query<&Transform, With<UniCamController>>,
     )>,
     building_settings: Res<BuildingSettings>,
     mut evr_scroll: EventReader<MouseWheel>,

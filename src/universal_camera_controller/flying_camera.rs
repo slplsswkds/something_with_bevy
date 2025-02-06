@@ -1,4 +1,4 @@
-use super::{UniversalCameraControllerBridge, UniversalCameraControllerTrait};
+use super::{Bridge, UniversalCameraTrait};
 // use bevy::prelude::{Component, EulerRot, KeyCode, Quat, Vec3};
 use bevy::prelude::*;
 
@@ -19,15 +19,15 @@ impl Default for FlyingCamera {
     }
 }
 
-impl UniversalCameraControllerTrait for FlyingCamera {
-    fn update(&mut self, bridge: &mut UniversalCameraControllerBridge) {
+impl UniversalCameraTrait for FlyingCamera {
+    fn update(&mut self, bridge: &mut Bridge) {
         self.update_position(bridge);
         self.update_view(bridge);
     }
 }
 
 impl FlyingCamera {
-    fn update_position(&mut self, bridge: &mut UniversalCameraControllerBridge) {
+    fn update_position(&mut self, bridge: &mut Bridge) {
         #[cfg(debug_assertions)]
         if bridge.cam_transform.is_empty() {
             warn!("FlyingCamera::update_position: no camera found")
@@ -37,7 +37,7 @@ impl FlyingCamera {
         let forward = (cam_transform.rotation * Vec3::Z).normalize();
         let right = (cam_transform.rotation * Vec3::X).normalize();
 
-        let delta_move = bridge.settings.speed * bridge.time.delta_secs();
+        let delta_move = bridge.settings.movement_speed * bridge.time.delta_secs();
 
         let mut desired_position = if self.desired_position == Vec3::ZERO {
             cam_transform.translation
@@ -72,7 +72,7 @@ impl FlyingCamera {
         cam_transform.translation = cam_transform.translation.lerp(desired_position, t);
     }
 
-    fn update_view(&mut self, bridge: &mut UniversalCameraControllerBridge) {
+    fn update_view(&mut self, bridge: &mut Bridge) {
         let mut cam_transform = bridge.cam_transform.get_single_mut().unwrap();
 
         if self.pitch == 0.0 && self.yaw == 0.0 {
@@ -89,8 +89,8 @@ impl FlyingCamera {
             total_delta_y += event.delta.y;
         }
 
-        self.yaw -= bridge.settings.sensibility_horizontal * total_delta_x;
-        self.pitch -= bridge.settings.sensibility_vertical * total_delta_y;
+        self.yaw -= bridge.settings.sensitivity_horizontal * total_delta_x;
+        self.pitch -= bridge.settings.sensitivity_vertical * total_delta_y;
 
         self.pitch = self
             .pitch

@@ -1,4 +1,4 @@
-use super::{UniversalCameraControllerBridge, UniversalCameraControllerTrait};
+use super::{Bridge, UniversalCameraTrait};
 use bevy::math::{Mat3, Quat};
 use bevy::prelude::{Component, Vec3};
 
@@ -22,8 +22,8 @@ impl Default for SphericalCamera {
     }
 }
 
-impl UniversalCameraControllerTrait for SphericalCamera {
-    fn update(&mut self, bridge: &mut UniversalCameraControllerBridge) {
+impl UniversalCameraTrait for SphericalCamera {
+    fn update(&mut self, bridge: &mut Bridge) {
         let mut total_delta_x = 0.0;
         let mut total_delta_y = 0.0;
 
@@ -34,8 +34,8 @@ impl UniversalCameraControllerTrait for SphericalCamera {
         }
 
         // Calculating camera rotation
-        self.phi -= bridge.settings.sensibility_horizontal * total_delta_x;
-        self.theta += bridge.settings.sensibility_vertical * total_delta_y;
+        self.phi -= bridge.settings.sensitivity_horizontal * total_delta_x;
+        self.theta += bridge.settings.sensitivity_vertical * total_delta_y;
         self.theta = self.theta.clamp(10_f32.to_radians(), 89.9_f32.to_radians());
 
         // Calculating new camera position
