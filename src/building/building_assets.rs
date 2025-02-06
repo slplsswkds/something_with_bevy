@@ -3,6 +3,7 @@ use bevy::prelude::*;
 
 #[derive(Resource)]
 pub struct BuildingAssets {
+    pub preview_obj: Option<Handle<Scene>>,
     pub foundation: Foundation,
     pub wall: Wall,
     pub gable: Gable,
@@ -78,6 +79,7 @@ impl BuildingAssets {
         // let preview_material = bridge.materials.add(Color::srgba(0.5, 0.5, 1.0, 0.5));
 
         Self {
+            preview_obj: None,
             foundation: Foundation::load(&mut bridge),
             wall: Wall::load(&mut bridge),
             gable: Gable::load(&mut bridge),

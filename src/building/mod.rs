@@ -1,9 +1,11 @@
 mod building_assets;
 use super::UniversalCameraController;
+use bevy::input::mouse::MouseScrollUnit;
 use bevy::input::mouse::MouseWheel;
 use bevy::prelude::*;
+use bevy::window::{CursorGrabMode, PrimaryWindow};
+use bevy_egui::{egui, EguiContext, EguiContexts};
 use building_assets::{BuildingAssets, BuildingAssetsInitBridge};
-use bevy::input::mouse::MouseScrollUnit;
 
 #[allow(unused_imports)]
 pub mod prelude {
@@ -21,11 +23,10 @@ enum BuildingReadinessState {
 
 #[derive(States, Default, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum BuildingMode {
-    Building,
-    Editing,
-    Repairing,
     #[default]
     Disabled,
+    Menu,
+    Building,
 }
 
 #[derive(Resource)]
@@ -54,6 +55,10 @@ impl Plugin for BuildingPlugin {
                 Update,
                 building_watchdog_system.run_if(in_state(BuildingReadinessState::Ready)),
             )
+            // ---------- Menu Mode
+            .add_systems(OnEnter(BuildingMode::Menu), enter_building_menu)
+            .add_systems(Update, (building_menu).run_if(in_state(BuildingMode::Menu)))
+            .add_systems(OnExit(BuildingMode::Menu), exit_building_menu)
             // ---------- Building Mode
             .add_systems(OnEnter(BuildingMode::Building), init_building_mode)
             .add_systems(
@@ -62,15 +67,7 @@ impl Plugin for BuildingPlugin {
                     .chain()
                     .run_if(in_state(BuildingMode::Building)),
             )
-            .add_systems(OnExit(BuildingMode::Building), deinit_building_mode)
-        // ---------- Editing Mode
-        // .add_systems(OnEnter(BuildingMode::Editing), ())
-        // .add_systems(Update, ().run_if(in_state(BuildingMode::Editing)))
-        // .add_systems(OnEnter(BuildingMode::Editing), ())
-        ;
-        // ---------- Repairing Mode
-        // ...
-        // ...
+            .add_systems(OnExit(BuildingMode::Building), deinit_building_mode);
     }
 }
 
@@ -87,13 +84,43 @@ fn load_building_assets(
     info!("BuildingReadinessState::Ready");
 }
 
+// ---------- Building Menu
+fn enter_building_menu(mut window: Single<&mut Window, With<PrimaryWindow>>) {
+    window.cursor_options.grab_mode = CursorGrabMode::Confined;
+    window.cursor_options.visible = true;
+}
+fn building_menu(
+    mut contexts: EguiContexts,
+    mut evw_change_build_mode: EventWriter<ChangeBuildingModeEvent>,
+    mut building_assets: ResMut<BuildingAssets>,
+) {
+    egui::Window::new("Building Menu").show(contexts.ctx_mut(), |ui| {
+        ui.collapsing("Heading", |ui| {
+            ui.label("Body");
+        });
+        ui.button("Roof").clicked().then(|| {
+            building_assets.preview_obj = Some(building_assets.roof.roof_2x2_45.clone());
+            evw_change_build_mode.send(ChangeBuildingModeEvent(BuildingMode::Building));
+        });
+        ui.button("Wall").clicked().then(|| {
+            building_assets.preview_obj = Some(building_assets.wall.wall_2x2.clone());
+            evw_change_build_mode.send(ChangeBuildingModeEvent(BuildingMode::Building));
+        });
+    });
+}
+fn exit_building_menu(mut window: Single<&mut Window, With<PrimaryWindow>>) {
+    window.cursor_options.grab_mode = CursorGrabMode::Locked;
+    window.cursor_options.visible = false;
+}
 // ---------- Building Mode
 fn init_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
     // show UI with building menu
     // let preview: Handle<Scene> = assets.wall.wall_2x2.clone();
-    let preview: Handle<Scene> = assets.roof.roof_2x2_45.clone();
-    commands.spawn((SceneRoot(preview), PreviewBuilding));
-    info!("init_building_mode fake completed");
+    if let Some(preview) = assets.preview_obj.clone() {
+        commands.spawn((SceneRoot(preview), PreviewBuilding));
+    } else {
+        error!("No preview_obj found in assets.preview_obj. Does it okay?");
+    }
 }
 
 fn building_system(
@@ -120,17 +147,24 @@ fn update_preview_building_position(
     let cam_transform = params.p1().get_single().unwrap().clone();
 
     let mut vertical_scroll = 0_f32;
-    evr_scroll.read().enumerate().for_each(|(idx, scroll)| {
-        match scroll.unit {
+    evr_scroll
+        .read()
+        .enumerate()
+        .for_each(|(idx, scroll)| match scroll.unit {
             MouseScrollUnit::Line => {
                 vertical_scroll += scroll.y;
-                println!("Scroll (line units): vertical: {}, horizontal: {}", scroll.y, scroll.x);
+                println!(
+                    "Scroll (line units): vertical: {}, horizontal: {}",
+                    scroll.y, scroll.x
+                );
             }
             MouseScrollUnit::Pixel => {
-                println!("Scroll (pixel units): vertical: {}, horizontal: {}", scroll.y, scroll.x);
+                println!(
+                    "Scroll (pixel units): vertical: {}, horizontal: {}",
+                    scroll.y, scroll.x
+                );
             }
-        }
-    });
+        });
 
     params.p0().iter_mut().for_each(|mut transform| {
         transform
@@ -171,16 +205,15 @@ fn building_watchdog_system(
     for ev in ev_switch_mode.read() {
         info!("Changing building mode: {:?}", ev.0);
         match ev.0 {
+            BuildingMode::Menu => building_mode_state.set(BuildingMode::Menu),
             BuildingMode::Building => building_mode_state.set(BuildingMode::Building),
-            BuildingMode::Editing => building_mode_state.set(BuildingMode::Editing),
-            BuildingMode::Repairing => building_mode_state.set(BuildingMode::Repairing),
             BuildingMode::Disabled => building_mode_state.set(BuildingMode::Disabled),
         }
     }
 
     // for debug only !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if keys.just_pressed(KeyCode::KeyB) {
-        building_mode_state.set(BuildingMode::Building);
+        building_mode_state.set(BuildingMode::Menu);
         info!("Changing building mode: Building");
     } else if keys.just_pressed(KeyCode::KeyN) {
         building_mode_state.set(BuildingMode::Disabled);

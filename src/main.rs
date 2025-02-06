@@ -12,9 +12,10 @@ use bevy::render::{
 };
 use bevy::window::CursorGrabMode::Locked;
 use bevy::window::*;
-
 use std::path::PathBuf;
 use universal_camera_controller::prelude::*;
+
+use bevy_egui::EguiPlugin;
 
 fn main() {
     App::new()
@@ -40,6 +41,7 @@ fn main() {
                     ..default()
                 }),
         )
+        .add_plugins(EguiPlugin)
         .add_plugins(UniversalCameraControllerPlugin)
         .add_plugins(BuildingPlugin)
         .add_systems(Startup, setup_tmp_world_env)
