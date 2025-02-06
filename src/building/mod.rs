@@ -1,3 +1,4 @@
+mod building;
 mod building_assets;
 mod building_menu;
 
@@ -7,6 +8,9 @@ use bevy::input::mouse::MouseWheel;
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, PrimaryWindow};
 use bevy_egui::{egui, EguiContext, EguiContexts};
+use building::{
+    building_system, exit_building_mode, enter_building_mode, update_preview_building_position,
+};
 use building_assets::{BuildingAssets, BuildingAssetsInitBridge};
 use building_menu::{building_menu, enter_building_menu, exit_building_menu};
 
@@ -63,14 +67,14 @@ impl Plugin for BuildingPlugin {
             .add_systems(Update, building_menu.run_if(in_state(BuildingMode::Menu)))
             .add_systems(OnExit(BuildingMode::Menu), exit_building_menu)
             // ---------- Building Mode
-            .add_systems(OnEnter(BuildingMode::Building), init_building_mode)
+            .add_systems(OnEnter(BuildingMode::Building), enter_building_mode)
             .add_systems(
                 Update,
                 (building_system, update_preview_building_position)
                     .chain()
                     .run_if(in_state(BuildingMode::Building)),
             )
-            .add_systems(OnExit(BuildingMode::Building), deinit_building_mode);
+            .add_systems(OnExit(BuildingMode::Building), exit_building_mode);
     }
 }
 
@@ -86,78 +90,6 @@ fn load_building_assets(
     building_readiness_state.set(BuildingReadinessState::Ready);
     info!("BuildingReadinessState::Ready");
 }
-
-// ---------- Building Mode
-fn init_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
-    // show UI with building menu
-    // let preview: Handle<Scene> = assets.wall.wall_2x2.clone();
-    if let Some(preview) = assets.preview_obj.clone() {
-        commands.spawn((SceneRoot(preview), PreviewBuilding));
-    } else {
-        error!("No preview_obj found in assets.preview_obj. Does it okay?");
-    }
-}
-
-fn building_system(
-    mut commands: Commands,
-    // mut preview_building: Query<&Transform, With<PreviewBuilding>>,
-    mut preview_building: Query<(&SceneRoot, &Transform), With<PreviewBuilding>>,
-    buttons: Res<ButtonInput<MouseButton>>,
-) {
-    let (root, transform) = preview_building.single();
-    if buttons.just_pressed(MouseButton::Left) {
-        commands.spawn((root.clone(), transform.clone()));
-    }
-}
-
-/// Moves the building preview to the correct position relative to the camera and the global grid
-fn update_preview_building_position(
-    mut params: ParamSet<(
-        Query<&mut Transform, With<PreviewBuilding>>,
-        Query<&Transform, With<UniversalCameraController>>,
-    )>,
-    building_settings: Res<BuildingSettings>,
-    mut evr_scroll: EventReader<MouseWheel>,
-) {
-    let cam_transform = params.p1().get_single().unwrap().clone();
-
-    let mut vertical_scroll = 0_f32;
-    evr_scroll
-        .read()
-        .enumerate()
-        .for_each(|(idx, scroll)| match scroll.unit {
-            MouseScrollUnit::Line => {
-                vertical_scroll += scroll.y;
-            }
-            MouseScrollUnit::Pixel => {}
-        });
-
-    params.p0().iter_mut().for_each(|mut transform| {
-        transform
-            .translation
-            .round_to_step(building_settings.grid_size);
-
-        let rotation = Quat::from_rotation_y(vertical_scroll * 15_f32.to_radians());
-        transform.rotation *= rotation;
-
-        let distance_in_front = 7.0;
-        let camera_position = cam_transform.translation;
-        let camera_forward = cam_transform.rotation * Vec3::NEG_Z;
-
-        let new_cube_position = camera_position + camera_forward * distance_in_front;
-        transform.translation = new_cube_position.round_to_step(building_settings.grid_size);
-    });
-}
-
-fn deinit_building_mode(
-    mut commands: Commands,
-    preview_building_query: Query<Entity, With<PreviewBuilding>>,
-) {
-    preview_building_query.iter().for_each(|entity| {
-        commands.entity(entity).despawn();
-    });
-}
-// ------------------------------
 
 #[derive(Event)]
 struct ChangeBuildingModeEvent(BuildingMode);
