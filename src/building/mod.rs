@@ -43,7 +43,7 @@ struct BuildingSettings {
 
 impl Default for BuildingSettings {
     fn default() -> Self {
-        Self { grid_size: 1.0 }
+        Self { grid_size: 0.1 }
     }
 }
 

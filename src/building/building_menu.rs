@@ -24,9 +24,19 @@ pub fn building_menu(
     };
 
     egui::Window::new("Building Menu").show(contexts.ctx_mut(), |ui| {
-        ui.collapsing("Roof", |ui| {
-            ui.button("Roof 2x2 45°").clicked().then(|| {
-                building_assets.preview_obj = Some(building_assets.roof.roof_2x2_45.clone());
+        // ui.collapsing("Beam", |ui| {
+        //     ui.button("Beam 2m").clicked().then(|| {
+        //         building_assets.preview_obj = Some(building_assets.beam.beam_2m.clone());
+        //         go_build();
+        //     });
+        // });
+        ui.collapsing("Floor", |ui| {
+            ui.button("Floor 2x2").clicked().then(|| {
+                building_assets.preview_obj = Some(building_assets.floor.floor_2x2.clone());
+                go_build();
+            });
+            ui.button("Floor 1x1").clicked().then(|| {
+                building_assets.preview_obj = Some(building_assets.floor.floor_1x1.clone());
                 go_build();
             });
         });
@@ -36,12 +46,17 @@ pub fn building_menu(
                 go_build();
             });
         });
+        ui.collapsing("Roof", |ui| {
+            ui.button("Roof 2x2 45°").clicked().then(|| {
+                building_assets.preview_obj = Some(building_assets.roof.roof_2x2_45.clone());
+                go_build();
+            });
+        });
     });
 }
 
 pub fn exit_building_menu(
     mut window: Single<&mut Window, With<PrimaryWindow>>,
-    mut camera_controller_state: ResMut<NextState<UniCamState>>,
     mut evw_change_camera_controller_state: EventWriter<UniCamChangeStateEvent>,
 ) {
     window.cursor_options.grab_mode = CursorGrabMode::Locked;

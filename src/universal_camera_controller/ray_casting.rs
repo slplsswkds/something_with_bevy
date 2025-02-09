@@ -27,10 +27,10 @@ pub fn uni_cam_ray_cast(
         let hits = ray_cast.cast_ray(ray, &settings);
 
         for (entity, hit) in hits {
-            println!(
-                "The ray hit the object {:?} at point {:?}",
-                entity, hit.point
-            );
+            // println!(
+            //     "The ray hit the object {:?} at point {:?}",
+            //     entity, hit.point
+            // );
         }
     }
 }

@@ -10,7 +10,6 @@ use bevy::render::{
     settings::{Backends, RenderCreation, WgpuSettings},
     RenderPlugin,
 };
-use bevy::window::CursorGrabMode::Locked;
 use bevy::window::*;
 use std::path::PathBuf;
 use universal_camera_controller::prelude::*;
@@ -32,7 +31,7 @@ fn main() {
                     primary_window: Some(Window {
                         present_mode: PresentMode::AutoVsync,
                         cursor_options: CursorOptions {
-                            grab_mode: Locked,
+                            grab_mode: CursorGrabMode::Confined,
                             visible: false,
                             ..default()
                         },
@@ -140,6 +139,10 @@ fn setup_tmp_world_env(
             hdr: true,
             ..default()
         },
+        PerspectiveProjection {
+            fov: 120.0_f32.to_radians(),
+            ..default()
+        },
         Bloom::NATURAL,
         Msaa::default(),
         UniCamController::spherical_camera(),
@@ -153,7 +156,7 @@ fn setup_tmp_world_env(
 
 fn spawn_wall(mut commands: Commands, asset_server: Res<AssetServer>) {
     let wall_scene = asset_server
-        .load(GltfAssetLabel::Scene(0).from_asset("Medieval Timbered Wall 2k/wall.gltf"));
+        .load(GltfAssetLabel::Scene(0).from_asset("models/wall.gltf"));
     commands.spawn((
         SceneRoot(wall_scene.clone()),
         Transform::from_translation(Vec3::new(-1.0, 1.0, 0.0)),
