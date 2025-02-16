@@ -145,12 +145,13 @@ fn setup_tmp_world_env(
         },
         Bloom::NATURAL,
         Msaa::default(),
-        UniCamController::spherical_camera(),
+        UniCamController::from(FlyingCamera::default()),
         MotionBlur {
             shutter_angle: 0.5,
             samples: 1,
             ..default()
         },
+        Transform::from_xyz(2.0, 2.0, 2.0).look_at(Vec3::new(-1.0, 1.0, 0.0), Vec3::Y),
     ));
 }
 

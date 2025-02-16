@@ -88,14 +88,18 @@ fn change_cam_mode(
 ) {
     universal_camera.iter_mut().for_each(|mut cam_controller| {
         if keys.just_pressed(KeyCode::F1) {
-            *cam_controller = UniCamController::flying_camera();
+            *cam_controller = FlyingCamera::default().into();
         }
         if keys.just_pressed(KeyCode::F3) {
-            *cam_controller = UniCamController::spherical_camera();
+            *cam_controller = SphericalCamera::default().into();
         }
     })
 }
 
+/// A system parameter that provides access to various resources
+/// needed for camera updates, including time, settings,
+/// camera transform, mouse movement events, and keyboard input.
+/// This acts as a bridge between the camera controllers and the Bevy ECS.
 #[derive(SystemParam)]
 struct Bridge<'w, 's> {
     time: Res<'w, Time>,
@@ -114,17 +118,10 @@ pub struct UniCamController {
     mode: Box<dyn UniCamTrait>,
 }
 
-#[allow(dead_code)]
-impl UniCamController {
-    pub fn spherical_camera() -> Self {
+impl<T: UniCamTrait + 'static> From<T> for UniCamController {
+    fn from(camera: T) -> Self {
         Self {
-            mode: Box::new(SphericalCamera::default()),
-        }
-    }
-
-    pub fn flying_camera() -> Self {
-        Self {
-            mode: Box::new(FlyingCamera::default()),
+            mode: Box::new(camera),
         }
     }
 }
