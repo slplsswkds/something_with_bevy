@@ -86,7 +86,7 @@ fn change_cam_mode(
 struct Bridge<'w, 's> {
     time: Res<'w, Time>,
     settings: Res<'w, UniCamSettings>,
-    cam_transform: Query<'w, 's, &'static mut Transform, With<UniCamController>>,
+    cam_transform: Single<'w, &'static mut Transform, With<UniCamController>>,
     evr_mouse_movement: EventReader<'w, 's, MouseMotion>,
     keys: Res<'w, ButtonInput<KeyCode>>,
 }

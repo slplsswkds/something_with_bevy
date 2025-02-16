@@ -33,7 +33,7 @@ impl FlyingCamera {
             warn!("FlyingCamera::update_position: no camera found")
         }
 
-        let mut cam_transform = bridge.cam_transform.get_single_mut().unwrap();
+        let cam_transform: &mut Transform = &mut *bridge.cam_transform;
         let forward = (cam_transform.rotation * Vec3::Z).normalize();
         let right = (cam_transform.rotation * Vec3::X).normalize();
 
@@ -73,7 +73,7 @@ impl FlyingCamera {
     }
 
     fn update_view(&mut self, bridge: &mut Bridge) {
-        let mut cam_transform = bridge.cam_transform.get_single_mut().unwrap();
+        let cam_transform: &mut Transform = &mut *bridge.cam_transform;
 
         if self.pitch == 0.0 && self.yaw == 0.0 {
             let (yaw, pitch, _) = cam_transform.rotation.to_euler(EulerRot::YXZ);

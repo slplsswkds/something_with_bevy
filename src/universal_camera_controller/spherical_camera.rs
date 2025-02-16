@@ -1,6 +1,6 @@
 use super::{Bridge, UniCamTrait};
 use bevy::math::{Mat3, Quat};
-use bevy::prelude::{Component, Vec3};
+use bevy::prelude::{Component, Transform, Vec3};
 
 #[allow(dead_code)]
 #[derive(Component)]
@@ -60,7 +60,7 @@ impl UniCamTrait for SphericalCamera {
         let t = 1.0 - (-30.0 * bridge.time.delta_secs()).exp();
 
         // Apply the transformations to the camera
-        let mut cam_transform = bridge.cam_transform.get_single_mut().unwrap();
+        let cam_transform: &mut Transform = &mut *bridge.cam_transform;
 
         // Smoothly interpolate position
         cam_transform.translation = cam_transform.translation.lerp(new_position, t);
