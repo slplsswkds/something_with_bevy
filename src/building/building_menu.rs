@@ -24,12 +24,6 @@ pub fn building_menu(
     };
 
     egui::Window::new("Building Menu").show(contexts.ctx_mut(), |ui| {
-        // ui.collapsing("Beam", |ui| {
-        //     ui.button("Beam 2m").clicked().then(|| {
-        //         building_assets.preview_obj = Some(building_assets.beam.beam_2m.clone());
-        //         go_build();
-        //     });
-        // });
         ui.collapsing("Floor", |ui| {
             ui.button("Floor 2x2").clicked().then(|| {
                 building_assets.preview_obj = Some(building_assets.floor.floor_2x2.clone());

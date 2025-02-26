@@ -109,9 +109,6 @@ pub struct BuildingAssetsInitBridge<'w> {
 
 impl BuildingAssets {
     pub fn load_all(mut bridge: BuildingAssetsInitBridge) -> Self {
-        // let cube_mesh = bridge.meshes.add(Cuboid::from_size(Vec3::splat(1.000001)));
-        // let preview_material = bridge.materials.add(Color::srgba(0.5, 0.5, 1.0, 0.5));
-
         Self {
             preview_obj: None,
             foundation: Foundation::load(&mut bridge),

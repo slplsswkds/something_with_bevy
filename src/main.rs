@@ -31,7 +31,7 @@ fn main() {
                     primary_window: Some(Window {
                         present_mode: PresentMode::AutoVsync,
                         cursor_options: CursorOptions {
-                            grab_mode: CursorGrabMode::Confined,
+                            grab_mode: CursorGrabMode::Locked,
                             visible: false,
                             ..default()
                         },

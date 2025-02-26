@@ -1,6 +1,6 @@
 [package]
 name = "something_with_bevy"
-version = "0.5.7"
+version = "0.5.8"
 edition = "2021"
 
 # ------------------------- Enable a small amount of optimization in the dev profile.
@@ -32,10 +32,10 @@ rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 linker = "rust-lld.exe"
 
 [dependencies]
-bevy_egui = "0.32.0"
+bevy_egui = "0.33.0"
 
 [dependencies.bevy]
-version = "0.15.1"
+version = "0.15.3"
 default-features = false
 features = [
     # ----- DEFAULT DEATURES -----
