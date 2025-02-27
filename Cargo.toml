@@ -1,6 +1,6 @@
 [package]
 name = "something_with_bevy"
-version = "0.5.8"
+version = "0.5.9"
 edition = "2021"
 
 # ------------------------- Enable a small amount of optimization in the dev profile.
@@ -33,6 +33,22 @@ linker = "rust-lld.exe"
 
 [dependencies]
 bevy_egui = "0.33.0"
+
+#[dependencies.avian3d]
+#version = "0.2.1"
+#default-features = false
+#features = [
+#    "3d", # Enables 3D physics. Incompatible with 2d.
+#    "f64", # Enables f64 precision for physics. Incompatible with f32.
+#    "default-collider", # Enables the default Collider. Required for spatial queries. Requires either the parry-f32 or parry-f64 feature.
+#    "parry-f64", # Enables the f64 version of the Parry collision detection library. Also enables the default-collider feature.
+#    "collider-from-mesh", # Allows you to create Colliders from Meshes.
+#    "bevy_scene", # Enables ColliderConstructorHierarchy to wait until a Scene has loaded before processing it.
+#    "bevy_picking", # Enables physics picking support for bevy_picking using the PhysicsPickingPlugin. The plugin must be added separately.
+#    "debug-plugin", # Enables physics debug rendering using the PhysicsDebugPlugin. The plugin must be added separately.
+#    "parallel", # Enables some extra multithreading, which improves performance for larger simulations but can add some overhead for smaller ones.
+#    "simd" # Enables SIMD optimizations.
+#]
 
 [dependencies.bevy]
 version = "0.15.3"

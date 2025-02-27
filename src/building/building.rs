@@ -5,6 +5,13 @@ use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
 use bevy::prelude::*;
 use std::ops::{Deref, DerefMut};
 
+pub mod prelude {
+    pub use super::building_system;
+    pub use super::enter_building_mode;
+    pub use super::exit_building_mode;
+    pub use super::update_preview_building_position;
+}
+
 /// Initializes the building mode by spawning the preview object.
 pub fn enter_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
     if let Some(preview) = assets.preview_obj.clone() {

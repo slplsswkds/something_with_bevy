@@ -11,10 +11,9 @@ use bevy::render::{
     RenderPlugin,
 };
 use bevy::window::*;
+use bevy_egui::EguiPlugin;
 use std::path::PathBuf;
 use universal_camera_controller::prelude::*;
-
-use bevy_egui::EguiPlugin;
 
 fn main() {
     App::new()
@@ -94,13 +93,6 @@ fn setup_tmp_world_env(
 
     let mesh_handle = meshes.add(mesh);
 
-    // // Cube
-    // commands.spawn((
-    //     Mesh3d(meshes.add(Cuboid::default())),
-    //     MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-    //     Transform::from_xyz(0.0, 0.5, 0.0),
-    // ));
-
     // Ground
     commands.spawn((
         Mesh3d(mesh_handle.clone()),
@@ -161,9 +153,5 @@ fn spawn_wall(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         SceneRoot(wall_scene.clone()),
         Transform::from_translation(Vec3::new(-1.0, 1.0, 0.0)),
-    ));
-    commands.spawn((
-        SceneRoot(wall_scene.clone()),
-        Transform::from_translation(Vec3::new(-1.0, 1.0, 2.0)),
     ));
 }
