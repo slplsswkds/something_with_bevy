@@ -1,11 +1,8 @@
 mod flying_camera;
-mod ray_casting;
 mod settings;
 mod spherical_camera;
 
 use crate::UniCamSettings;
-use crate::universal_camera_controller::prelude::RayCaster;
-use crate::universal_camera_controller::ray_casting::uni_cam_ray_cast;
 use crate::{FlyingCamera, SphericalCamera};
 use bevy::ecs::system::SystemParam;
 use bevy::input::mouse::MouseMotion;
@@ -14,7 +11,6 @@ use bevy::prelude::*;
 #[allow(unused_imports)]
 pub mod prelude {
     pub use super::flying_camera::FlyingCamera;
-    pub use super::ray_casting::RayCaster;
     pub use super::settings::UniCamSettings;
     pub use super::spherical_camera::SphericalCamera;
     pub use super::{UniCamChangeStateEvent, UniCamController, UniCamPlugin, UniCamState};
@@ -35,13 +31,11 @@ impl Plugin for UniCamPlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<UniCamState>()
             .add_event::<UniCamChangeStateEvent>()
-            .init_resource::<RayCaster>()
             .init_resource::<UniCamSettings>()
             .add_systems(Update, uni_cam_watchdog)
             .add_systems(
                 Update,
-                (change_cam_mode, uni_cam_controller, uni_cam_ray_cast)
-                    .run_if(in_state(UniCamState::Enabled)),
+                (change_cam_mode, uni_cam_controller).run_if(in_state(UniCamState::Enabled)),
             );
     }
 }

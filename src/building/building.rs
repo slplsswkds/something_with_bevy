@@ -1,4 +1,4 @@
-use super::building_assets::BuildingAssets;
+use super::building_assets::{BuildingAssets, PreviewBuildingHandle};
 use super::{BuildingSettings, PreviewBuilding, RoundToStep};
 use crate::universal_camera_controller::UniCamController;
 use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
@@ -13,8 +13,12 @@ pub mod prelude {
 }
 
 /// Initializes the building mode by spawning the preview object.
-pub fn enter_building_mode(mut commands: Commands, assets: Res<BuildingAssets>) {
-    if let Some(preview) = assets.preview_obj.clone() {
+pub fn enter_building_mode(
+    mut commands: Commands,
+    assets: Res<BuildingAssets>,
+    preview_building_handle: Res<PreviewBuildingHandle>,
+) {
+    if let Some(preview) = preview_building_handle.0.clone() {
         commands.spawn((SceneRoot(preview), PreviewBuilding));
     } else {
         error!("No preview_obj found in assets.preview_obj. Does it okay?");

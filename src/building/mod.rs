@@ -2,20 +2,14 @@ mod building;
 mod building_assets;
 mod building_menu;
 
-use super::UniCamController;
+use crate::UniCamController;
 use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, PrimaryWindow};
 use bevy_egui::{egui, EguiContext, EguiContexts};
 use building::prelude::*;
-use building_assets::{BuildingAssets, BuildingAssetsInitBridge};
+use building_assets::{BuildingAssets, BuildingAssetsInitBridge, PreviewBuildingHandle};
 use building_menu::{building_menu, enter_building_menu, exit_building_menu};
-
-#[allow(unused_imports)]
-pub mod prelude {
-    pub use super::BuildingMode;
-    pub use super::BuildingPlugin;
-}
 
 #[derive(States, Default, Debug, Clone, PartialEq, Eq, Hash)]
 enum BuildingReadinessState {
@@ -50,6 +44,7 @@ impl Plugin for BuildingPlugin {
         app.init_state::<BuildingReadinessState>()
             .init_state::<BuildingMode>()
             .init_resource::<BuildingSettings>()
+            .init_resource::<PreviewBuildingHandle>()
             .add_event::<ChangeBuildingModeEvent>()
             .add_systems(
                 OnEnter(BuildingReadinessState::Loading),

@@ -1,9 +1,7 @@
 mod building;
 mod universal_camera_controller;
 
-use crate::building::prelude::*;
-use bevy::core_pipeline::bloom::Bloom;
-use bevy::core_pipeline::motion_blur::MotionBlur;
+use bevy::core_pipeline::{bloom::Bloom, motion_blur::MotionBlur};
 use bevy::image::ImageLoaderSettings;
 use bevy::prelude::*;
 use bevy::render::{
@@ -12,6 +10,7 @@ use bevy::render::{
 };
 use bevy::window::*;
 use bevy_egui::EguiPlugin;
+use building::BuildingPlugin;
 use std::path::PathBuf;
 use universal_camera_controller::prelude::*;
 
@@ -148,8 +147,7 @@ fn setup_tmp_world_env(
 }
 
 fn spawn_wall(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let wall_scene = asset_server
-        .load(GltfAssetLabel::Scene(0).from_asset("models/wall.gltf"));
+    let wall_scene = asset_server.load(GltfAssetLabel::Scene(0).from_asset("models/wall.gltf"));
     commands.spawn((
         SceneRoot(wall_scene.clone()),
         Transform::from_translation(Vec3::new(-1.0, 1.0, 0.0)),

@@ -1,9 +1,11 @@
 use bevy::ecs::system::SystemParam;
 use bevy::prelude::*;
 
+#[derive(Resource, Default)]
+pub struct PreviewBuildingHandle(pub Option<Handle<Scene>>);
+
 #[derive(Resource)]
 pub struct BuildingAssets {
-    pub preview_obj: Option<Handle<Scene>>,
     pub foundation: Foundation,
     pub beam: Beam,
     pub floor: Floor,
@@ -104,13 +106,11 @@ impl BuildingAsset for Gable {
 #[derive(SystemParam)]
 pub struct BuildingAssetsInitBridge<'w> {
     asset_server: Res<'w, AssetServer>,
-    materials: ResMut<'w, Assets<StandardMaterial>>,
 }
 
 impl BuildingAssets {
     pub fn load_all(mut bridge: BuildingAssetsInitBridge) -> Self {
         Self {
-            preview_obj: None,
             foundation: Foundation::load(&mut bridge),
             beam: Beam::load(&mut bridge),
             floor: Floor::load(&mut bridge),
