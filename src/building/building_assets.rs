@@ -6,100 +6,32 @@ pub struct PreviewBuildingHandle(pub Option<Handle<Scene>>);
 
 #[derive(Resource)]
 pub struct BuildingAssets {
-    pub foundation: Foundation,
-    pub beam: Beam,
-    pub floor: Floor,
-    pub wall: Wall,
-    pub gable: Gable,
-    pub roof: Roof,
+    pub foundation: BuildingsGroup,
+    pub beam: BuildingsGroup,
+    pub floor: BuildingsGroup,
+    pub wall: BuildingsGroup,
+    pub gable: BuildingsGroup,
+    pub roof: BuildingsGroup,
 }
 
-pub struct Foundation {
-    pub foundation_2x2: Handle<Scene>,
+pub struct BuildingAssetsPack {
+    pub name: String,
+    pub scene: Handle<Scene>,
+    pub _snap_points: Vec<Vec3>,
 }
 
-pub struct Beam {
-    pub beam_2m: Handle<Scene>,
-}
+pub struct BuildingsGroup(pub Vec<BuildingAssetsPack>);
 
-pub struct Floor {
-    pub floor_2x2: Handle<Scene>,
-    pub floor_1x1: Handle<Scene>,
-}
-
-pub struct Wall {
-    pub wall_2x2: Handle<Scene>,
-}
-
-pub struct Roof {
-    pub roof_2x2_45: Handle<Scene>,
-}
-
-pub struct Gable {
-    pub gable_2x2_45: Handle<Scene>,
-}
-
-trait BuildingAsset {
-    fn load(bridge: &mut BuildingAssetsInitBridge) -> Self;
-}
-
-impl BuildingAsset for Foundation {
-    fn load(bridge: &mut BuildingAssetsInitBridge) -> Self {
-        let foundation_2x2: Handle<Scene> = bridge
-            .asset_server
-            .load(GltfAssetLabel::Scene(0).from_asset("Foundation 2k/foundation.gltf"));
-        Self { foundation_2x2 }
+impl BuildingsGroup {
+    fn new(buildings: Vec<BuildingAssetsPack>) -> Self {
+        BuildingsGroup(buildings)
     }
-}
-
-impl BuildingAsset for Beam {
-    fn load(bridge: &mut BuildingAssetsInitBridge) -> Self {
-        let beam_2m: Handle<Scene> = bridge
-            .asset_server
-            .load(GltfAssetLabel::Scene(0).from_asset("models/beam.gltf"));
-        Self { beam_2m }
+    fn empty() -> Self {
+        Self::new(Vec::new())
     }
-}
-
-impl BuildingAsset for Floor {
-    fn load(bridge: &mut BuildingAssetsInitBridge) -> Self {
-        let floor_2x2: Handle<Scene> = bridge
-            .asset_server
-            .load(GltfAssetLabel::Scene(0).from_asset("models/floor.gltf"));
-        let floor_1x1: Handle<Scene> = bridge
-            .asset_server
-            .load(GltfAssetLabel::Scene(1).from_asset("models/floor.gltf"));
-        Self {
-            floor_2x2,
-            floor_1x1,
-        }
-    }
-}
-
-impl BuildingAsset for Wall {
-    fn load(bridge: &mut BuildingAssetsInitBridge) -> Self {
-        let wall_2x2: Handle<Scene> = bridge
-            .asset_server
-            .load(GltfAssetLabel::Scene(0).from_asset("models/wall.gltf"));
-        Self { wall_2x2 }
-    }
-}
-
-impl BuildingAsset for Roof {
-    fn load(bridge: &mut BuildingAssetsInitBridge) -> Self {
-        let roof_2x2_45: Handle<Scene> = bridge
-            .asset_server
-            .load(GltfAssetLabel::Scene(0).from_asset("Orange Clay Rooftop Tiles 2k/roof.gltf"));
-        Self { roof_2x2_45 }
-    }
-}
-
-impl BuildingAsset for Gable {
-    fn load(bridge: &mut BuildingAssetsInitBridge) -> Self {
-        let gable_2x2_45: Handle<Scene> = bridge
-            .asset_server
-            .load(GltfAssetLabel::Scene(0).from_asset("Gable/gable.gltf"));
-        Self { gable_2x2_45 }
+    fn add(mut self, asset: BuildingAssetsPack) -> Self {
+        self.0.push(asset);
+        self
     }
 }
 
@@ -109,14 +41,52 @@ pub struct BuildingAssetsInitBridge<'w> {
 }
 
 impl BuildingAssets {
-    pub fn load_all(mut bridge: BuildingAssetsInitBridge) -> Self {
+    pub fn load_all(bridge: BuildingAssetsInitBridge) -> Self {
+        let foundation = BuildingsGroup::empty();
+
+        let beam = BuildingsGroup::empty();
+
+        let floor = BuildingsGroup::empty()
+            .add(BuildingAssetsPack {
+                name: String::from("Floor 2x2"),
+                _snap_points: Vec::new(),
+                scene: bridge
+                    .asset_server
+                    .load(GltfAssetLabel::Scene(0).from_asset("models/floor.gltf")),
+            })
+            .add(BuildingAssetsPack {
+                name: String::from("Floor 2x2"),
+                _snap_points: Vec::new(),
+                scene: bridge
+                    .asset_server
+                    .load(GltfAssetLabel::Scene(1).from_asset("models/floor.gltf")),
+            });
+
+        let wall = BuildingsGroup::empty().add(BuildingAssetsPack {
+            name: String::from("Wall 2x2"),
+            _snap_points: Vec::new(),
+            scene: bridge
+                .asset_server
+                .load(GltfAssetLabel::Scene(0).from_asset("models/wall.gltf")),
+        });
+
+        let gable = BuildingsGroup::empty();
+
+        let roof = BuildingsGroup::empty().add(BuildingAssetsPack {
+            name: String::from("Roof 2x2 45"),
+            _snap_points: Vec::new(),
+            scene: bridge.asset_server.load(
+                GltfAssetLabel::Scene(0).from_asset("Orange Clay Rooftop Tiles 2k/roof.gltf"),
+            ),
+        });
+
         Self {
-            foundation: Foundation::load(&mut bridge),
-            beam: Beam::load(&mut bridge),
-            floor: Floor::load(&mut bridge),
-            wall: Wall::load(&mut bridge),
-            gable: Gable::load(&mut bridge),
-            roof: Roof::load(&mut bridge),
+            foundation,
+            beam,
+            floor,
+            wall,
+            gable,
+            roof,
         }
     }
 }

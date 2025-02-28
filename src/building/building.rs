@@ -1,9 +1,8 @@
-use super::building_assets::{BuildingAssets, PreviewBuildingHandle};
+use super::building_assets::PreviewBuildingHandle;
 use super::{BuildingSettings, PreviewBuilding, RoundToStep};
 use crate::universal_camera_controller::UniCamController;
 use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
 use bevy::prelude::*;
-use std::ops::{Deref, DerefMut};
 
 pub mod prelude {
     pub use super::building_system;
@@ -15,7 +14,6 @@ pub mod prelude {
 /// Initializes the building mode by spawning the preview object.
 pub fn enter_building_mode(
     mut commands: Commands,
-    assets: Res<BuildingAssets>,
     preview_building_handle: Res<PreviewBuildingHandle>,
 ) {
     if let Some(preview) = preview_building_handle.0.clone() {
@@ -28,7 +26,7 @@ pub fn enter_building_mode(
 /// Handles the building system by placing a building when the left mouse button is pressed.
 pub fn building_system(
     mut commands: Commands,
-    mut preview_building: Query<(&SceneRoot, &Transform), With<PreviewBuilding>>,
+    preview_building: Query<(&SceneRoot, &Transform), With<PreviewBuilding>>,
     buttons: Res<ButtonInput<MouseButton>>,
 ) {
     if buttons.just_pressed(MouseButton::Left) {

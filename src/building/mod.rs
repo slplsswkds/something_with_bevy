@@ -2,18 +2,13 @@ mod building;
 mod building_assets;
 mod building_menu;
 
-use crate::UniCamController;
-use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
 use bevy::prelude::*;
-use bevy::window::{CursorGrabMode, PrimaryWindow};
-use bevy_egui::{egui, EguiContext, EguiContexts};
 use building::prelude::*;
 use building_assets::{BuildingAssets, BuildingAssetsInitBridge, PreviewBuildingHandle};
 use building_menu::{building_menu, enter_building_menu, exit_building_menu};
 
 #[derive(States, Default, Debug, Clone, PartialEq, Eq, Hash)]
 enum BuildingReadinessState {
-    NotReady,
     #[default]
     Loading,
     Ready,
