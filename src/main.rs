@@ -1,5 +1,7 @@
 mod building;
+mod main_menu;
 mod universal_camera_controller;
+mod settings;
 
 use bevy::core_pipeline::{bloom::Bloom, motion_blur::MotionBlur};
 use bevy::image::ImageLoaderSettings;
@@ -11,8 +13,10 @@ use bevy::render::{
 use bevy::window::*;
 use bevy_egui::EguiPlugin;
 use building::BuildingPlugin;
+use main_menu::MainMenuPlugin;
 use std::path::PathBuf;
 use universal_camera_controller::prelude::*;
+use crate::settings::GameSettingsPlugin;
 
 fn main() {
     App::new()
@@ -38,7 +42,9 @@ fn main() {
                     ..default()
                 }),
         )
+        .add_plugins(GameSettingsPlugin)
         .add_plugins(EguiPlugin)
+        .add_plugins(MainMenuPlugin)
         .add_plugins(UniCamPlugin)
         .add_plugins(BuildingPlugin)
         .add_systems(Startup, setup_tmp_world_env)

@@ -1,6 +1,6 @@
 [package]
 name = "something_with_bevy"
-version = "0.6.1"
+version = "0.7.0"
 edition = "2021"
 
 # ------------------------- Enable a small amount of optimization in the dev profile.
@@ -33,6 +33,7 @@ linker = "rust-lld.exe"
 
 [dependencies]
 bevy_egui = "0.33.0"
+#bevy_mod_physx = "0.7.0"
 
 #[dependencies.avian3d]
 #version = "0.2.1"

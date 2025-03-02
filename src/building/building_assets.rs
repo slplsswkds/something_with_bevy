@@ -76,7 +76,7 @@ impl BuildingAssets {
     }
 }
 
-// #[inline]
+#[inline]
 #[allow(unused_variables, unused_mut)]
 fn load_group_foundation(bridge: &mut BuildingAssetsInitBridge) -> BuildingsGroup {
     BuildingsGroup::empty()
