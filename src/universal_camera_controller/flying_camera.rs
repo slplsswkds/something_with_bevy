@@ -45,22 +45,24 @@ impl FlyingCamera {
             self.desired_position
         };
 
-        if bridge.keys.pressed(KeyCode::KeyW) {
+        let key_codes = &bridge.game_settings.keyboard;
+
+        if bridge.keys.pressed(key_codes.forward) {
             desired_position -= forward * delta_move;
         }
-        if bridge.keys.pressed(KeyCode::KeyS) {
+        if bridge.keys.pressed(key_codes.backward) {
             desired_position += forward * delta_move;
         }
-        if bridge.keys.pressed(KeyCode::KeyD) {
+        if bridge.keys.pressed(key_codes.right) {
             desired_position += right * delta_move;
         }
-        if bridge.keys.pressed(KeyCode::KeyA) {
+        if bridge.keys.pressed(key_codes.left) {
             desired_position -= right * delta_move;
         }
-        if bridge.keys.pressed(KeyCode::Space) {
+        if bridge.keys.pressed(key_codes.jump) {
             desired_position.y += delta_move;
         }
-        if bridge.keys.pressed(KeyCode::ControlLeft) {
+        if bridge.keys.pressed(key_codes.crouch) {
             desired_position.y -= delta_move;
         }
 
@@ -89,8 +91,8 @@ impl FlyingCamera {
             total_delta_y += event.delta.y;
         }
 
-        self.yaw -= bridge.settings.sensitivity_horizontal * total_delta_x;
-        self.pitch -= bridge.settings.sensitivity_vertical * total_delta_y;
+        self.yaw -= bridge.game_settings.mouse.sensitivity_horizontal * total_delta_x;
+        self.pitch -= bridge.game_settings.mouse.sensitivity_vertical * total_delta_y;
 
         self.pitch = self
             .pitch

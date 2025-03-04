@@ -2,6 +2,7 @@ mod flying_camera;
 mod settings;
 mod spherical_camera;
 
+use crate::settings::GameSettings;
 use crate::UniCamSettings;
 use crate::{FlyingCamera, SphericalCamera};
 use bevy::ecs::system::SystemParam;
@@ -83,6 +84,7 @@ struct Bridge<'w, 's> {
     cam_transform: Single<'w, &'static mut Transform, With<UniCamController>>,
     evr_mouse_movement: EventReader<'w, 's, MouseMotion>,
     keys: Res<'w, ButtonInput<KeyCode>>,
+    game_settings: Res<'w, GameSettings>,
 }
 
 /// Trait that defines the behavior of different camera types.

@@ -34,8 +34,8 @@ impl UniCamTrait for SphericalCamera {
         }
 
         // Calculating camera rotation
-        self.phi -= bridge.settings.sensitivity_horizontal * total_delta_x;
-        self.theta += bridge.settings.sensitivity_vertical * total_delta_y;
+        self.phi -= bridge.game_settings.mouse.sensitivity_horizontal * total_delta_x;
+        self.theta += bridge.game_settings.mouse.sensitivity_vertical * total_delta_y;
         self.theta = self.theta.clamp(10_f32.to_radians(), 89.9_f32.to_radians());
 
         // Calculating new camera position

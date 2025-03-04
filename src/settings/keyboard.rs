@@ -3,13 +3,15 @@ use bevy::prelude::KeyCode;
 #[derive(Clone)]
 pub struct KeyboardBindings {
     // Movement (Universal Camera Controller)
-    forward: KeyCode,
-    backward: KeyCode,
-    left: KeyCode,
-    right: KeyCode,
+    pub forward: KeyCode,
+    pub backward: KeyCode,
+    pub left: KeyCode,
+    pub right: KeyCode,
+    pub jump: KeyCode,
+    pub crouch: KeyCode,
     // Building
-    start_building: KeyCode,
-    stop_building: KeyCode,
+    pub start_building: KeyCode,
+    pub stop_building: KeyCode,
 }
 
 impl Default for KeyboardBindings {
@@ -20,6 +22,8 @@ impl Default for KeyboardBindings {
             backward: KeyCode::KeyS,
             left: KeyCode::KeyA,
             right: KeyCode::KeyD,
+            jump: KeyCode::Space,
+            crouch: KeyCode::ControlLeft,
             // Building
             start_building: KeyCode::KeyB,
             stop_building: KeyCode::KeyN,
