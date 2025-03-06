@@ -50,7 +50,7 @@ impl Plugin for MainMenuPlugin {
 }
 
 fn watchdog(
-    mut current_state: ResMut<State<MainMenuActivityState>>,
+    current_state: ResMut<State<MainMenuActivityState>>,
     mut next_state: ResMut<NextState<MainMenuActivityState>>,
     keys: Res<ButtonInput<KeyCode>>,
 ) {

@@ -4,8 +4,8 @@ use super::settings::video::VideoSettings;
 use bevy::app::{App, Plugin, Startup};
 use bevy::ecs::system::SystemParam;
 use bevy::log::warn;
-use bevy::prelude::{default, Res, Resource, Single, Window};
-use bevy::window::{CursorGrabMode, CursorOptions, PresentMode, WindowMode, WindowResolution};
+use bevy::prelude::{Res, Resource, Single, Window};
+use bevy::window::WindowResolution;
 
 mod keyboard;
 mod mouse;

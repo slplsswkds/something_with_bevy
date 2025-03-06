@@ -18,7 +18,7 @@ pub fn exit_main_menu() {}
 pub fn main_menu(
     mut contexts: EguiContexts,
     mut exit_events: EventWriter<AppExit>,
-    mut current_settings_state: Res<State<ShowSettingsUiState>>,
+    current_settings_state: Res<State<ShowSettingsUiState>>,
     mut settings_state: ResMut<NextState<ShowSettingsUiState>>,
 ) {
     let settings_btn_state = match current_settings_state.get() {

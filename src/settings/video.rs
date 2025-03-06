@@ -1,4 +1,4 @@
-use bevy::window::{MonitorSelection, PresentMode, Window, WindowMode, WindowResolution};
+use bevy::window::{PresentMode, WindowMode};
 
 #[derive(Clone)]
 pub struct VideoSettings {

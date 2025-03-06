@@ -23,6 +23,7 @@ pub struct SettingsUiBridge<'w> {
     settings: ResMut<'w, GameSettings>,
     settings_ui_state: ResMut<'w, NextState<ShowSettingsUiState>>,
     game_settings_bridge: GameSettingsBridge<'w>,
+    keys: Res<'w, ButtonInput<KeyCode>>,
 }
 
 pub fn settings_ui(mut contexts: EguiContexts, mut bridge: SettingsUiBridge) {
@@ -35,8 +36,37 @@ pub fn settings_ui(mut contexts: EguiContexts, mut bridge: SettingsUiBridge) {
     });
 }
 
-fn submenu_keyboard(ui: &mut Ui, _bridge: &mut SettingsUiBridge) {
-    ui.collapsing("Keyboard", |_| {});
+fn submenu_keyboard(ui: &mut Ui, bridge: &mut SettingsUiBridge) {
+    let keyboard = &mut bridge.tmp_settings.0.keyboard;
+    let pressed_keys = bridge.keys.get_pressed().nth(0);
+
+    let btn_settings = |ui: &mut Ui, label: &str, key: &mut KeyCode| {
+        ui.horizontal(|ui| {
+            ui.label(label);
+            ui.button(format!("{:?}", key)).clicked().then(|| {
+                pressed_keys.is_some().then(|| {
+                    *key = *pressed_keys.unwrap();
+                });
+            });
+        });
+    };
+
+    ui.collapsing("Keyboard", |ui| {
+        ui.label("Holding the button, select the old bind you want to replace");
+        ui.separator();
+        ui.collapsing("Movement", |ui| {
+            btn_settings(ui, "Forward", &mut keyboard.forward);
+            btn_settings(ui, "Backward", &mut keyboard.backward);
+            btn_settings(ui, "Left", &mut keyboard.left);
+            btn_settings(ui, "Right", &mut keyboard.right);
+            btn_settings(ui, "Jump", &mut keyboard.jump);
+            btn_settings(ui, "Crouch", &mut keyboard.crouch);
+        });
+        ui.collapsing("Building", |ui| {
+            btn_settings(ui, "Start building", &mut keyboard.start_building);
+            btn_settings(ui, "Stop building", &mut keyboard.stop_building);
+        });
+    });
 }
 
 fn submenu_mouse(ui: &mut Ui, bridge: &mut SettingsUiBridge) {
@@ -75,14 +105,14 @@ fn form_save_or_cancel_or_defaults(ui: &mut Ui, bridge: &mut SettingsUiBridge) {
     });
 }
 
-fn add_slider(ui: &mut Ui, text: &str, value: &mut f32, range: std::ops::RangeInclusive<f32>) {
-    ui.add(Slider::new(value, range).text(text));
-}
-
 fn apply_settings(bridge: &mut SettingsUiBridge) {
     *bridge.settings = bridge.tmp_settings.0.clone();
     bridge
         .settings
         .apply_settings(&mut bridge.game_settings_bridge);
     bridge.settings_ui_state.set(ShowSettingsUiState::Inactive);
+}
+
+fn add_slider(ui: &mut Ui, text: &str, value: &mut f32, range: std::ops::RangeInclusive<f32>) {
+    ui.add(Slider::new(value, range).text(text));
 }
