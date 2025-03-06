@@ -16,7 +16,7 @@ use building::BuildingPlugin;
 use main_menu::MainMenuPlugin;
 use std::path::PathBuf;
 use universal_camera_controller::prelude::*;
-use crate::settings::GameSettingsPlugin;
+use settings::GameSettingsPlugin;
 
 fn main() {
     App::new()
