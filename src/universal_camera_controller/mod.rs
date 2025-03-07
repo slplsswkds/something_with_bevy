@@ -1,21 +1,16 @@
 mod flying_camera;
+mod plugin;
 mod settings;
 mod spherical_camera;
 
 use crate::settings::GameSettings;
-use crate::UniCamSettings;
-use crate::{FlyingCamera, SphericalCamera};
 use bevy::ecs::system::SystemParam;
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
-
-#[allow(unused_imports)]
-pub mod prelude {
-    pub use super::flying_camera::FlyingCamera;
-    pub use super::settings::UniCamSettings;
-    pub use super::spherical_camera::SphericalCamera;
-    pub use super::{UniCamChangeStateEvent, UniCamController, UniCamPlugin, UniCamState};
-}
+pub use flying_camera::FlyingCamera;
+pub use plugin::UniCamPlugin;
+pub use settings::UniCamSettings;
+pub use spherical_camera::SphericalCamera;
 
 /// Represents the state of the camera controller (enabled/disabled).
 #[derive(States, Default, Debug, Clone, PartialEq, Eq, Hash)]
@@ -23,22 +18,6 @@ pub enum UniCamState {
     Disabled,
     #[default]
     Enabled,
-}
-
-/// Main plugin for the universal camera controller.
-pub struct UniCamPlugin;
-
-impl Plugin for UniCamPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_state::<UniCamState>()
-            .add_event::<UniCamChangeStateEvent>()
-            .init_resource::<UniCamSettings>()
-            .add_systems(Update, uni_cam_watchdog)
-            .add_systems(
-                Update,
-                (change_cam_mode, uni_cam_controller).run_if(in_state(UniCamState::Enabled)),
-            );
-    }
 }
 
 /// Event to change the camera controller state.

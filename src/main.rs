@@ -1,7 +1,7 @@
 mod building;
 mod main_menu;
-mod universal_camera_controller;
 mod settings;
+mod universal_camera_controller;
 
 use bevy::core_pipeline::{bloom::Bloom, motion_blur::MotionBlur};
 use bevy::image::ImageLoaderSettings;
@@ -14,9 +14,9 @@ use bevy::window::*;
 use bevy_egui::EguiPlugin;
 use building::BuildingPlugin;
 use main_menu::MainMenuPlugin;
-use std::path::PathBuf;
-use universal_camera_controller::prelude::*;
 use settings::GameSettingsPlugin;
+use std::path::PathBuf;
+use universal_camera_controller::{FlyingCamera, UniCamController, UniCamPlugin};
 
 fn main() {
     App::new()
