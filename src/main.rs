@@ -3,6 +3,7 @@ mod main_menu;
 mod settings;
 mod universal_camera_controller;
 
+use crate::universal_camera_controller::SphericalCamera;
 use bevy::core_pipeline::{bloom::Bloom, motion_blur::MotionBlur};
 use bevy::image::ImageLoaderSettings;
 use bevy::prelude::*;
@@ -16,7 +17,7 @@ use building::BuildingPlugin;
 use main_menu::MainMenuPlugin;
 use settings::GameSettingsPlugin;
 use std::path::PathBuf;
-use universal_camera_controller::{FlyingCamera, UniCamController, UniCamPlugin};
+use universal_camera_controller::{UniCamController, UniCamPlugin};
 
 fn main() {
     App::new()
@@ -58,7 +59,7 @@ fn setup_tmp_world_env(
     mut materials: ResMut<Assets<StandardMaterial>>,
     asset_server: Res<AssetServer>,
 ) {
-    let material_dir: PathBuf = PathBuf::from("Pond Side Grassy and Muddy Land 2k");
+    let material_dir = PathBuf::from("materials").join("Pond Side Grassy and Muddy Land 2k");
 
     let color = material_dir.join("color.ktx2"); // toktx --t2 --genmipmap --encode uastc --uastc_quality 3 --filter lanczos4 --convert_oetf srgb --assign_oetf srgb --zcmp 20 color.ktx2 color.png
     let normal = material_dir.join("normal_opengl.ktx2"); // toktx --t2 --genmipmap --encode uastc --uastc_quality 3 --filter lanczos4 --convert_oetf srgb --assign_oetf linear --zcmp 20 normal_opengl.ktx2 normal_opengl.png
@@ -142,7 +143,7 @@ fn setup_tmp_world_env(
         },
         Bloom::NATURAL,
         Msaa::default(),
-        UniCamController::from(FlyingCamera::default()),
+        UniCamController::from(SphericalCamera::default()),
         MotionBlur {
             shutter_angle: 0.5,
             samples: 1,

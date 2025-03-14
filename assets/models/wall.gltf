@@ -76,17 +76,17 @@
 		{
 			"mimeType":"image/ktx2",
 			"name":"normal_opengl",
-			"uri":"../Medieval Timbered Wall 2k/normal_opengl.ktx2"
+			"uri":"../materials/Medieval Timbered Wall 2k/normal_opengl.ktx2"
 		},
 		{
 			"mimeType":"image/ktx2",
 			"name":"base_color",
-			"uri":"../Medieval Timbered Wall 2k/base_color.ktx2"
+			"uri":"../materials/Medieval Timbered Wall 2k/base_color.ktx2"
 		},
 		{
 			"mimeType":"image/ktx2",
 			"name":"metallic_roughness",
-			"uri":"../Medieval Timbered Wall 2k/metallic_roughness.ktx2"
+			"uri":"../materials/Medieval Timbered Wall 2k/metallic_roughness.ktx2"
 		}
 	],
 	"accessors":[

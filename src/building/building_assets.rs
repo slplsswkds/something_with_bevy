@@ -126,7 +126,7 @@ fn load_group_roof(mut bridge: &mut BuildingAssetsInitBridge) -> BuildingsGroup 
     BuildingsGroup::empty().add(BuildingAssetsPack::new(
         &mut bridge,
         "Roof 2x2 45",
-        GltfAssetLabel::Scene(0).from_asset("Orange Clay Rooftop Tiles 2k/roof.gltf"),
+        GltfAssetLabel::Scene(0).from_asset("models/roof.gltf"),
         Vec::new(),
     ))
 }

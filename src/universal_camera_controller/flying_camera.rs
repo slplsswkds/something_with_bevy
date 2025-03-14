@@ -28,11 +28,6 @@ impl UniCamTrait for FlyingCamera {
 
 impl FlyingCamera {
     fn update_position(&mut self, bridge: &mut Bridge) {
-        #[cfg(debug_assertions)]
-        if bridge.cam_transform.is_empty() {
-            warn!("FlyingCamera::update_position: no camera found")
-        }
-
         let cam_transform: &mut Transform = &mut *bridge.cam_transform;
         let forward = (cam_transform.rotation * Vec3::Z).normalize();
         let right = (cam_transform.rotation * Vec3::X).normalize();

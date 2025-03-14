@@ -132,17 +132,17 @@
         {
             "mimeType":"image/ktx2",
             "name":"normal_opengl",
-            "uri":"../Rough Parallel Wood Plank Texture 2k/normal_opengl.ktx2"
+            "uri":"../materials/Rough Parallel Wood Plank Texture 2k/normal_opengl.ktx2"
         },
         {
             "mimeType":"image/ktx2",
             "name":"base-color",
-            "uri":"../Rough Parallel Wood Plank Texture 2k/base_color.ktx2"
+            "uri":"../materials/Rough Parallel Wood Plank Texture 2k/base_color.ktx2"
         },
         {
             "mimeType":"image/ktx2",
             "name":"roughness_2k",
-            "uri":"../Rough Parallel Wood Plank Texture 2k/roughness.ktx2"
+            "uri":"../materials/Rough Parallel Wood Plank Texture 2k/roughness.ktx2"
         }
     ],
 	"accessors":[
