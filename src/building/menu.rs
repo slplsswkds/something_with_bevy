@@ -1,6 +1,6 @@
-use super::building_assets::{BuildingAssets, BuildingsGroup};
+use super::assets::{BuildingAssets, BuildingsGroup};
 use super::{BuildingMode, ChangeBuildingModeEvent};
-use crate::building::building_assets::PreviewBuildingHandle;
+use crate::building::assets::PreviewBuildingHandle;
 use crate::universal_camera_controller::{UniCamChangeStateEvent, UniCamState};
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode, PrimaryWindow};

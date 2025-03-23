@@ -1,4 +1,4 @@
-use super::building_assets::PreviewBuildingHandle;
+use super::assets::PreviewBuildingHandle;
 use super::{BuildingSettings, PreviewBuilding, RoundToStep};
 use crate::universal_camera_controller::UniCamController;
 use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
