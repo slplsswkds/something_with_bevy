@@ -1,4 +1,5 @@
 mod building;
+mod characters;
 mod main_menu;
 mod ready_materials;
 mod settings;
@@ -15,6 +16,7 @@ use bevy::render::{
 use bevy::window::*;
 use bevy_egui::EguiPlugin;
 use building::BuildingPlugin;
+use characters::CharactersPlugin;
 use main_menu::MainMenuPlugin;
 use settings::GameSettingsPlugin;
 use universal_camera_controller::{UniCamController, UniCamPlugin};
@@ -49,6 +51,7 @@ fn main() {
         .add_plugins(UniCamPlugin)
         .add_plugins(BuildingPlugin)
         .add_plugins(ReadyMaterialsPlugin)
+        .add_plugins(CharactersPlugin)
         .add_systems(Startup, setup_tmp_world_env)
         .add_systems(Startup, spawn_wall)
         .run();
