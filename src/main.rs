@@ -6,8 +6,6 @@ mod settings;
 mod universal_camera_controller;
 
 use crate::ready_materials::{ReadyMaterialsPlugin, ReadyMaterialsResource};
-use crate::universal_camera_controller::SphericalCamera;
-use bevy::core_pipeline::{bloom::Bloom, motion_blur::MotionBlur};
 use bevy::prelude::*;
 use bevy::render::{
     settings::{Backends, RenderCreation, WgpuSettings},
@@ -19,7 +17,7 @@ use building::BuildingPlugin;
 use characters::CharactersPlugin;
 use main_menu::MainMenuPlugin;
 use settings::GameSettingsPlugin;
-use universal_camera_controller::{UniCamController, UniCamPlugin};
+use universal_camera_controller::{UniCamBundle, UniCamPlugin};
 
 fn main() {
     App::new()
@@ -101,26 +99,7 @@ fn setup_tmp_world_env(
     ));
 
     // Camera
-    commands.spawn((
-        Camera3d::default(),
-        Camera {
-            hdr: true,
-            ..default()
-        },
-        PerspectiveProjection {
-            fov: 120.0_f32.to_radians(),
-            ..default()
-        },
-        Bloom::NATURAL,
-        Msaa::default(),
-        UniCamController::from(SphericalCamera::default()),
-        MotionBlur {
-            shutter_angle: 0.5,
-            samples: 1,
-            ..default()
-        },
-        Transform::from_xyz(2.0, 2.0, 2.0).look_at(Vec3::new(-1.0, 1.0, 0.0), Vec3::Y),
-    ));
+    commands.spawn(UniCamBundle::default());
 }
 
 fn spawn_wall(mut commands: Commands, asset_server: Res<AssetServer>) {

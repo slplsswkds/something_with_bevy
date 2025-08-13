@@ -4,6 +4,7 @@ mod settings;
 mod spherical_camera;
 
 use crate::settings::GameSettings;
+use bevy::core_pipeline::{bloom::Bloom, motion_blur::MotionBlur};
 use bevy::ecs::system::SystemParam;
 use bevy::input::mouse::MouseMotion;
 use bevy::prelude::*;
@@ -81,6 +82,41 @@ impl<T: UniCamTrait + 'static> From<T> for UniCamController {
     fn from(camera: T) -> Self {
         Self {
             mode: Box::new(camera),
+        }
+    }
+}
+
+#[derive(Bundle)]
+pub struct UniCamBundle {
+    camera3d: Camera3d,
+    camera: Camera,
+    projection: Projection,
+    transform: Transform,
+    bloom: Bloom,
+    msaa: Msaa,
+    motion_blur: MotionBlur,
+    controller: UniCamController,
+}
+
+impl Default for UniCamBundle {
+    fn default() -> Self {
+        Self {
+            camera3d: Camera3d::default(),
+            camera: Camera {
+                hdr: true,
+                ..default()
+            },
+            projection: Projection::default(),
+            transform: Transform::from_xyz(2.0, 2.0, 2.0)
+                .looking_at(Vec3::new(-1.0, 1.0, 0.0), Vec3::Y),
+            bloom: Bloom::NATURAL,
+            msaa: Msaa::default(),
+            motion_blur: MotionBlur {
+                shutter_angle: 0.5,
+                samples: 1,
+                ..default()
+            },
+            controller: UniCamController::from(SphericalCamera::default()),
         }
     }
 }
